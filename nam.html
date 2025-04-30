@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Время намаза онлайн</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(120deg,#114c36 0,#4dc2b1 100%);
+            font-family: 'Rubik', Arial, Verdana, Tahoma, sans-serif;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: #0e392a;
+            color: #fff;
+            padding: 46px 0 18px 0;
+            text-align: center;
+            border-bottom-left-radius: 52px 18px;
+            border-bottom-right-radius: 52px 18px;
+            position: relative;
+        }
+        .top-bar .crescent {
+            font-size:2.9em;
+            position: absolute;
+            left: 30px; top: 13px;
+        }
+        .title {
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: .04em;
+        }
+        .slogan {
+            font-size: 1.13em;
+            font-style: italic;
+            color: #e6fff7;
+            margin-top: 4px;
+        }
+        .main-block {
+            background: rgba(255,255,255,0.96);
+            box-shadow: 0 10px 32px rgba(0,0,0,0.15);
+            border-radius: 24px;
+            padding: 28px 24px 18px 24px;
+            max-width: 410px;
+            margin: 36px auto 0;
+        }
+        .city {
+            text-align: center;
+            font-size:1.16em;
+            color: #187050;
+            margin-bottom: 8px;
+            letter-spacing: 0.02em;
+            font-weight: 600;
+        }
+        .namaz-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .namaz-row {
+            background: #d3f4ea;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 16px 11px 16px;
+            margin-bottom: 5px;
+            font-size: 17px;
+            color: #094c30;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(58, 158, 127, 0.05);
+            transition: background 0.17s;
+        }
+        .namaz-row.current {
+            background: #20c784;
+            color: #fff;
+            font-size: 1.18em;
+            font-weight: bold;
+        }
+        .namaz-title {
+            font-weight: bold;
+            font-size: 1.13em;
+            letter-spacing: 0.02em;
+        }
+        .namaz-time {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.06em;
+        }
+        .now-block {
+            text-align: center;
+            font-size: 1.14em;
+            margin: 21px 0 0 0;
+            color: #357c53;
+            letter-spacing: 0.04em;
+            font-weight: 500;
+            padding-bottom: .5em;
+        }
+        .now-block .now-time {
+            font-size: 1.45em;
+            font-weight: bold;
+            color: #228a61;
+            margin-left: 7px;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .city-ctrl {
+            display:flex;
+            gap:8px;
+            justify-content:center;
+            margin:10px 0 0 0;
+        }
+        .city-ctrl input[type=text] {
+            padding:7px 12px;
+            border-radius:7px;
+            border:1px solid #b4e0d4;
+            font-size:15px;
+            min-width: 80px;
+            outline: none;
+        }
+        .city-ctrl button {
+            padding:7px 14px;
+            border-radius:7px;
+            border: none;
+            background:#0e392a;
+            color:#fff;
+            font-size:15px;
+            cursor:pointer;
+            transition: background 0.17s;
+        }
+        .city-ctrl button:hover,
+        .city-ctrl button:focus {
+            background:#20c784;
+        }
+        .city-advice {
+            text-align:center;color:#23705f; margin-bottom:8px;font-size:0.96em;
+        }
+        .message {
+            color:#aa0d26;
+            text-align:center;
+            margin:10px 0 6px 0;
+            font-size: 1em;
+            min-height: 24px;
+        }
+        @media (max-width:600px) {
+            .main-block {padding:12px 4vw 8vw;}
+            .top-bar {border-radius:0;}
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div style="background: #166c43; border-radius: 0 0 22px 22px; padding: 0;margin-bottom:14px;">
+  <div style="display: flex; align-items: center; max-width:610px;margin:0 auto;">
+    <span style="color:#fff;font-size:1.34em;font-weight:900;letter-spacing:0.04em;margin-left:18px;margin-top:2px;">
+    </span>
+  </div>
+  <nav style="text-align:center;margin-top:0px; padding:10px 0 7px 0;">
+    <a href="SheykhGPT.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Шейх GPT</a>
+    <a href="quran.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Коран</a>
+    <a href="mush%D0%B0f.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Мусхаф</a>
+    <a href="99imen.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">99 имен</a>
+  </nav>
+</div>
+    <div class="top-bar">
+        <span class="crescent"></span>
+        <div class="title">Время намаза</div>
+        <div class="slogan">«Воистину, предписано верующим совершать молитву-намаз в строго определенное время!»</div>
+    </div>
+    <div class="main-block">
+        <div class="city-advice">
+          Введите любой город, село, деревню или адрес на русском и нажмите поиск.<br>
+          <span style="font-size:0.86em; color:#15896a;"></span>
+        </div>
+        <div class="city-ctrl">
+            <input type="text" id="cityInput" placeholder="Город/адрес" />
+            <button onclick="fetchByCity()">Поиск</button>
+            <button onclick="fetchByGeo()">Геолокация</button>
+        </div>
+        <div class="message" id="msg"></div>
+        <div class="city" id="currentCity">Москва, Россия</div>
+        <div class="now-block">
+            Текущее время:<span class="now-time" id="now"></span>
+        </div>
+        <div class="namaz-table" id="namazTimes"></div>
+    </div>
+    <script>
+    const namazNames = [
+        ['Фаджр','فجر'],
+        ['Восход','شروق'],
+        ['Зухр','ظهر'],
+        ['Аср','عصر'],
+        ['Магриб','مغرب'],
+        ['Иша','عشاء']
+    ];
+    function renderNamaz(prayerTimes) {
+        let html = "";
+        const nowParts = currentTime().split(':');
+        const nowMinutes = Number(nowParts[0]) * 60 + Number(nowParts[1]);
+        let highlightIndex = -1;
+        let times = [
+            prayerTimes.Fajr,
+            prayerTimes.Sunrise,
+            prayerTimes.Dhuhr,
+            prayerTimes.Asr,
+            prayerTimes.Maghrib,
+            prayerTimes.Isha
+        ].map(t=>t.slice(0,5));
+        for (let i = 0; i < times.length; i++) {
+            const parts = times[i].split(':');
+            const min = Number(parts[0]) * 60 + Number(parts[1]);
+            if (nowMinutes >= min) highlightIndex = i;
+        }
+        if (nowMinutes > timeToMins(times[times.length-1])) highlightIndex = -1;
+        for(let i=0;i<6;i++){
+            html += `<div class="namaz-row${highlightIndex===i?' current':''}">
+                <span class="namaz-title">${namazNames[i][0]}
+                  <span style="font-size:0.78em; color:#21785a;">(${namazNames[i][1]})</span>
+                </span>
+                <span class="namaz-time">${times[i]}</span>
+            </div>`;
+        }
+        document.getElementById('namazTimes').innerHTML = html;
+    }
+    function timeToMins(str){
+        const p=str.split(':'); return Number(p[0])*60+Number(p[1]);
+    }
+    function currentTime() {
+        const now = new Date();
+        return ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+    }
+    function updateClock() {
+        document.getElementById('now').textContent = currentTime();
+        if(window._lastPrayerTimes) renderNamaz(window._lastPrayerTimes);
+    }
+    setInterval(updateClock, 60000); updateClock();
+
+    function showMsg(msg) {
+        document.getElementById('msg').textContent = msg || '';
+    }
+    // -- Поиск по названию города на любом языке / любом населенном пункте РФ:
+    async function getCoordsByName(city) {
+      const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(city + ', Россия');
+      const response = await fetch(url, {headers: { 'Accept-Language': 'ru' }});
+      const data = await response.json();
+      if (data.length) {
+        return {
+          lat: data[0].lat,
+          lon: data[0].lon,
+          displayName: data[0].display_name
+        };
+      } else {
+        throw new Error("Город не найден.");
+      }
+    }
+    async function fetchNamazByCoords(lat, lon, cityName) {
+      showMsg('Получаем расписание...');
+      const apiUrl =
+        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=14`;
+      const r = await fetch(apiUrl); const d = await r.json();
+      if (d.code !== 200) throw new Error();
+      window._lastPrayerTimes = d.data.timings;
+      renderNamaz(window._lastPrayerTimes);
+      document.getElementById('currentCity').textContent =
+        cityName || (lat+', '+lon);
+      showMsg('');
+    }
+    async function fetchByCity() {
+  let cityStr = document.getElementById('cityInput').value.trim();
+  if (!cityStr) {showMsg('Введите город или деревню на русском!'); return;}
+  showMsg('Ищем '+cityStr+'...');
+  try {
+    const coords = await getCoordsByName(cityStr);
+    await fetchNamazByCoords(coords.lat, coords.lon, coords.displayName);
+    // Сохраняем выбранный город в localStorage!
+    localStorage.setItem('savedCity', cityStr);
+  } catch(e) {
+    showMsg('Город не найден или не удалось получить координаты!');
+  }
+}
+    // -- Определить по геолокации:
+    function fetchByGeo() {
+      showMsg('Определяем вашу геолокацию...');
+      if (!navigator.geolocation) {
+          showMsg('Ваш браузер не поддерживает геолокацию.');
+          return;
+      }
+      navigator.geolocation.getCurrentPosition(async function(pos){
+          try {
+              const lat = pos.coords.latitude;
+              const lon = pos.coords.longitude;
+              // Получаем красивое имя места
+              let cityName = '';
+              try {
+                  const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                  const data = await r.json();
+                  cityName = data.display_name || '';
+              } catch(e){ cityName = ''; }
+              await fetchNamazByCoords(lat, lon, cityName);
+          } catch(e){
+              showMsg('Не удалось найти расписание!');
+          }
+      }, function(){ showMsg('Не удалось определить геолокацию.'); });
+    }
+(async function(){
+  let defaultCity = localStorage.getItem('savedCity') || 'Москва';
+  try {
+    const coords = await getCoordsByName(defaultCity);
+    await fetchNamazByCoords(coords.lat, coords.lon, coords.displayName);
+    // Подставить еще и в input:
+    document.getElementById('cityInput').value = defaultCity;
+  } catch{}
+})();
+    </script>
+</body>
+</html>
