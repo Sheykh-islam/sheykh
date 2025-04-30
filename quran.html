@@ -93,6 +93,43 @@
             background: #e7fff2;
             box-shadow: 0 2px 8px rgba(54, 158, 111, 0.07);
         }
+         #iframeBox {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: #fff;
+      z-index: 999;
+    }
+    #suraFrame {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+    #homeBtn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      font-size: 19px;
+      background: #fff;
+      color: #222;
+      border: 2px solid #2a9d8f;
+      border-radius: 8px;
+      padding: 9px 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      opacity: 0.93;
+    }
+    #homeBtn:hover {
+      background: #2a9d8f;
+      color: #fff;
+    }
+    @media (max-width:480px) {
+      #suraList { padding: 9px;}
+      .sura-row { font-size: 15px; padding: 10px 0;}
+      #homeBtn { font-size: 15px; padding: 7px 14px;}
+    }
 
         @media (max-width: 480px) {
             .sura-ar {
