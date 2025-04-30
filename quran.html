@@ -12,7 +12,6 @@
     --row-hover: #e7fff2;
     --row-border: #efefef;
 }
-
 body {
     background: var(--main-bg);
     font-family: Arial, Verdana, Tahoma, sans-serif;
@@ -102,36 +101,12 @@ body {
     background: var(--row-hover);
     box-shadow: 0 2px 8px rgba(54, 158, 111, 0.07);
 }
-nav {
-    text-align: center;
-    margin-top: 0px;
-    padding: 10px 0 7px 0;
-}
-nav a {
-    color: #fff;
-    font-weight: bold;
-    padding: 0 12px;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1.01em;
-    margin-bottom: 6px;
-    transition: background 0.16s, color 0.12s;
-    border-radius: 5px;
-}
-nav a:active,
-nav a:focus {
-    background: #429f6c;
-    color: #eafff4;
-    outline: 0;
-}
 @media (max-width: 600px) {
     .sura-table {
         padding: 8px 2vw 15px 2vw;
-        /* ВНИМАНИЕ! НЕ УБИРАЕМ max-width! */
         max-width: 420px;
         margin: 10px auto 18px auto;
     }
-}
     .sura-row {
         font-size: 15px;
         padding: 9px 0;
@@ -148,12 +123,6 @@ nav a:focus {
     .sura-ayat {
         font-size: 0.93rem;
         padding: 0 1vw;
-    }
-    .sura-row {
-        font-size: 15px;
-        padding: 9px 0;
-        flex-direction: column;
-        gap: 2px;
     }
     .sura-num {
         width: 28px;
