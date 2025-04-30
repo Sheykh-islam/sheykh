@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Шейх GPT</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
   <style>
 :root {
   --primary-color: #1966b3;
@@ -21,10 +25,11 @@ html, body {
 .main-chat-wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   height: 100dvh;
-  width: 100vw;
-  /* max-width: 900px; */
-  margin: 0;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 @media (min-width: 600px) {
   .main-chat-wrapper { max-width: none; }
