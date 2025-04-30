@@ -20,7 +20,7 @@ body {
     margin: 0;
 }
 .sura-table {
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
     margin: 1px auto;
     background: var(--white-bg);
@@ -124,8 +124,16 @@ nav a:focus {
     outline: 0;
 }
 @media (max-width: 600px) {
-    body {
-        padding: 6px;
+    .sura-table {
+        padding: 8px 6px 16px 6px;
+        max-width: 99vw;       /* не больше ширины экрана */
+        margin: 0 auto;
+    }
+    .sura-row {
+        font-size: 15px;
+        padding: 9px 0;
+        flex-direction: column;
+        gap: 2px;
     }
     .sura-head {
         max-width: 100%;
