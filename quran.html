@@ -5,42 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список сур</title>
     <style>
-        body {
+            body {
             background: #ececec;
             font-family: Arial, Verdana, Tahoma, sans-serif;
-            padding: 15px;
             margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 34px auto 24px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.13);
+            padding: 24px 22px 30px;
+        }
+        .sura-head {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+        .sura-title {
+            font-size: 2.3rem;
+            font-weight: bold;
+            color: #218365;
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+        }
+        .sura-ayat {
+            color: #50575c;
+            font-style: italic;
+            opacity: 0.90;
+            font-size: 1.08rem;
+            margin-bottom: 8px;
         }
         .sura-table {
             width: 100%;
-            max-width: 100%;
-            margin: 1px auto;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.11);
-            padding: 15px !important;
-            box-sizing: border-box;
         }
         .sura-row {
             display: flex;
             align-items: flex-start;
             border-bottom: 1px solid #efefef;
-            padding: 14px 0;
+            padding: 15px 0 13px 0;
             font-size: 18px;
-            transition: background 0.15s;
+            transition: background 0.14s;
             text-decoration: none;
             color: inherit;
             cursor: pointer;
         }
-        .sura-row:last-child { 
-            border-bottom: none;
+        .sura-row:last-child { border-bottom: none; }
+        .sura-row:hover {
+            background: #e7fff2;
+            box-shadow: 0 2px 8px rgba(54, 158, 111, 0.07);
         }
         .sura-num {
             font-weight: bold;
             color: #369e6f;
-            width: 32px;
+            width: 38px;
             text-align: center;
-            font-size: 20px;
+            font-size: 22px;
             margin-top: 2px;
         }
         .sura-info {
@@ -49,30 +70,12 @@
             flex-direction: column;
             margin-left: 10px;
         }
-        .sura-head {
-            max-width: 500px;
-            margin: 16px auto 18px;
-            text-align: center;
-        }
-        .sura-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #218365;
-            margin-bottom: 9px;
-        }
-        .sura-ayat {
-            font-size: 1.02rem;
-            color: #50575c;
-            font-style: italic;
-            opacity: 0.92;
-            letter-spacing: 0.03em;
-            line-height: 1.4;
-        }
         .sura-name {
             font-weight: bold;
             font-size: 21px;
             letter-spacing: 0.5px;
             margin-bottom: 0;
+            color: #252c2a;
         }
         .sura-ru {
             color: #888;
@@ -89,75 +92,43 @@
             min-width: 95px;
             align-self: flex-end;
         }
-        .sura-row:hover {
-            background: #e7fff2;
-            box-shadow: 0 2px 8px rgba(54, 158, 111, 0.07);
+        #iframeBox {
+            display: none;
+            position: fixed;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: #fff;
+            z-index: 99;
         }
-         #iframeBox {
-      display: none;
-      position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: #fff;
-      z-index: 999;
-    }
-    #suraFrame {
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      display: block;
-    }
-    #homeBtn {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1001;
-      font-size: 19px;
-      background: #fff;
-      color: #222;
-      border: 2px solid #2a9d8f;
-      border-radius: 8px;
-      padding: 9px 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      opacity: 0.93;
-    }
-    #homeBtn:hover {
-      background: #2a9d8f;
-      color: #fff;
-    }
-    @media (max-width:480px) {
-      #suraList { padding: 9px;}
-      .sura-row { font-size: 15px; padding: 10px 0;}
-      #homeBtn { font-size: 15px; padding: 7px 14px;}
-    }
-
-        @media (max-width: 480px) {
-            .sura-ar {
-                font-size: 18px;
-                min-width: 70px;
-            }
-            .sura-name {
-                font-size: 18px;
-            }
-            .sura-num {
-                font-size: 16px;
-                width: 25px;
-            }
-            .sura-row {
-                padding: 10px 0;
-                font-size: 16px;
-            }
-            .sura-title {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-            }
-            .sura-ayat {
-                font-size: 0.9rem;
-                padding: 0 10px;
-            }
-            .sura-ru {
-                font-size: 13px;
-            }
+        #suraFrame {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            display: block;
+        }
+        #homeBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            font-size: 19px;
+            background: #fff;
+            color: #222;
+            border: 2px solid #2a9d8f;
+            border-radius: 8px;
+            padding: 9px 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+            opacity: 0.92;
+        }
+        #homeBtn:hover { background: #2a9d8f; color: #fff; }
+        @media (max-width:600px) {
+            .container { padding: 9px; margin: 12px auto;}
+            .sura-title { font-size: 1.22rem; }
+            .sura-row { font-size: 15px; padding: 9px 0;}
+            #homeBtn { font-size: 15px; padding: 7px 14px;}
+            .sura-ar {font-size: 16px; min-width: 60px;}
+            .sura-num {font-size: 15px; width: 28px;}
+            .sura-name {font-size: 17px;}
         }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
@@ -1099,12 +1070,15 @@
 <iframe id="suraFrame" src="https://quran.com/ru/1?translations=45" style="width:100%;height:90vh;border:none;"></iframe>
 
 <script>
-function goHome() {
-  window.location.href = "https://sheykh-islam.github.io/sheykh/";
+function openSura(num) {
+    document.getElementById('suraList').style.display = 'none';
+    document.getElementById('iframeBox').style.display = 'block';
+    document.getElementById('suraFrame').src = `https://quran.com/ru/${num}?translations=45`;
 }
-
-function goToSura(num) {
-  document.getElementById('suraFrame').src = `https://quran.com/ru/${num}?translations=45`;
+function goHome() {
+    document.getElementById('iframeBox').style.display = 'none';
+    document.getElementById('suraFrame').src = "";
+    document.getElementById('suraList').style.display = 'block';
 }
 </script>
 </body>
