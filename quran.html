@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список сур</title>
-    <style>
-            body {
+   <style>
+        body {
             background: #ececec;
             font-family: Arial, Verdana, Tahoma, sans-serif;
             margin: 0;
@@ -1063,13 +1063,13 @@
     </div>
     <div class="sura-ar">الناس</div>
 </div>
-   <div class="menu">
-  <button onclick="goHome()">Домой</button>
-  <iframe id="suraFrame" src="https://quran.com/ru/1?translations=45" style="width:100%;height:90vh;border:none;"></iframe>
+   <div id="iframeBox">
+    <button id="homeBtn" onclick="goHome()">Домой к списку</button>
+    <iframe id="suraFrame" src=""></iframe>
 </div>
 
 <script>
-function openSura(num) {
+function goToSura(num) {
     document.getElementById('suraList').style.display = 'none';
     document.getElementById('iframeBox').style.display = 'block';
     document.getElementById('suraFrame').src = `https://quran.com/ru/${num}?translations=45`;
