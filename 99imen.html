@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>99 Имен Аллаха | Кликните или нажмите пробел для переворота</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body 
+{
+      font-family: 'Noto Naskh Arabic', 'Arial', sans-serif;
+      background: #e7efe9;
+      color: #2e3a23;
+      margin: 0;
+      padding: 0;
+      min-height: 1vh;
+    }
+    .container {
+      max-width: 400px;
+      margin: -10px auto;
+      background: #fffbe7;
+      border-radius: 14px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      padding: 10px 10px 10px 10px;
+      text-align: center;
+    }
+    h1 {
+      font-family: 'Scheherazade New', serif;
+      color: #218642;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+    h2 {
+      font-family: 'Scheherazade New', serif;
+      color: #218642;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .card {
+      background: linear-gradient(135deg, #b9e5c9, #f9f6ef 80%);
+      border-radius: 18px;
+      padding: 40px 20px;
+      min-height: 70px;
+      margin-bottom: 24px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: transform .3s;
+      box-shadow: 0 6px 20px rgba(33, 134, 66, 0.08);
+      position: relative;
+      perspective: 60px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 35%;
+      transition: transform 0s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      backface-visibility: hidden;
+      left: 0;
+      top: 0;
+    }
+    .card-back {
+      background: linear-gradient(135deg, #f7e9be, #e2dccf 80%);
+      transform: rotateY(180deg);
+      border-radius: 18px;
+      min-height: 80px;
+    }
+.card-back .explanation {
+  width: 100%;
+  max-width: 100%;
+  margin: 16px auto 0 auto;
+  font-size: 1.08rem;
+  line-height: 1.75;
+  padding-right: 10px;
+padding-left: 8px;
+}
+    .arabic {
+      font-family: 'Amiri', serif;
+      font-size: 2.6rem;
+      color: #306c3d;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .translit {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #218642;
+    }
+    .translation {
+      font-size: 1.4rem;
+      color: #9e7318;
+      display: block;
+    }
+    .explanation {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #2e3a23;
+      text-align: left;
+    }
+    .navigation {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .navigation button {
+      background: #218642;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin: 0 10px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .navigation button:hover {
+      background: #066c2c;
+    }
+    .navigation span {
+      margin: 0 10px;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+<div style="background: #166c43; border-radius: 0 0 22px 22px; padding: 0;margin-bottom:14px;">
+  <div style="display: flex; align-items: center; max-width:610px;margin:0 auto;">
+    <span style="color:#fff;font-size:1.34em;font-weight:900;letter-spacing:0.04em;margin-left:18px;margin-top:2px;">
+    </span>
+  </div>
+  <nav style="text-align:center;margin-top:0px; padding:10px 0 7px 0;">
+    <a href="SheykhGPT.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Шейх GPT</a>
+    <a href="namaz.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Время намаза</a>
+    <a href="quran.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Суры Корана</a>
+    <a href="mushaf.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Мусхаф онлайн</a>
+    <a href="99imen.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">99 имен Аллаха</a>
+  </nav>
+</div>
+<div class="container">
+  <h1>99 имен Аллаха</h1>
+<h2>Нажмите, чтобы узнать значение</h2>
+<h5>Абу Хурайра (да будет доволен им Аллах) передаёт, что Посланник Аллаха (мир ему и благословение Аллаха) сказал: «У Аллаха девяносто девять имён, сотня без одного, кто запомнит их, тот непременно войдёт в Рай. Аллах — один, и Он любит нечётное</h5>
+  <div class="card" id="flashcard" tabindex="0" title="Кликните или нажмите пробел для переворота">
+    <div class="card-inner">
+      <div class="card-front" id="card-front">
+        <!-- Front: arabic + translit -->
+      </div>
+      <div class="card-back" id="card-back">
+        <!-- Back: translation + explanation -->
+      </div>
+    </div>
+  </div>
+  <div class="navigation">
+    <button id="prev">Назад</button>
+    <span id="counter"></span>
+    <button id="next">Вперед</button>
+  </div>
+</div>
+<script>
+const namesOfAllah = [
+  {
+    arabic: "الرَّحْمَنُ",
+    translit: "Ар-Рахман",
+    translation: "Милостивый",
+    explanation: "Тот, чья милость объемлет всё сущее в этом мире независимо от веры и поступков."
+  },
+  {
+    arabic: "الرَّحِيمُ",
+    translit: "Ар-Рахим",
+    translation: "Милосердный",
+    explanation: "Тот, кто проявляет особую милость к верующим в этом мире и в вечности."
+  },
+  {
+    arabic: "الْمَلِكُ",
+    translit: "Аль-Малик",
+    translation: "Властелин",
+    explanation: "Абсолютный Царь и Владыка всего сущего, которому принадлежит всё на небесах и на земле."
+  },
+  {
+    arabic: "الْقُدُّوسُ",
+    translit: "Аль-Куддус",
+    translation: "Святой",
+    explanation: "Безупречно чистый от любых недостатков, пороков и недостатков."
+  },
+  {
+    arabic: "السَّلاَمُ",
+    translit: "Ас-Салям",
+    translation: "Миротворящий",
+    explanation: "Источник мира и благополучия, Тот, кто дарует мир и безопасность своим творениям."
+  },
+  {
+    arabic: "الْمُؤْمِنُ",
+    translit: "Аль-Му'мин",
+    translation: "Дарующий безопасность",
+    explanation: "Тот, кто защищает верующих от зла, обеспечивает внутреннюю уверенность и защищенность."
+  },
+  {
+    arabic: "الْمُهَيْمِنُ",
+    translit: "Аль-Мухаймин",
+    translation: "Хранящий",
+    explanation: "Хранитель и Наблюдающий, который контролирует и оберегает все свои создания."
+  },
+  {
+    arabic: "الْعَزِيزُ",
+    translit: "Аль-Азиз",
+    translation: "Могущественный",
+    explanation: "Всесильный, непобедимый и неприступный, обладающий абсолютной силой."
+  },
+  {
+    arabic: "الْجَبَّارُ",
+    translit: "Аль-Джаббар",
+    translation: "Превозносящийся",
+    explanation: "Величественный, исправляющий недостатки творений, возвышающий и обладающий властью."
+  },
+  {
+    arabic: "الْمُتَكَبِّرُ",
+    translit: "Аль-Мутакаббир",
+    translation: "Величественный",
+    explanation: "Единственный, кто по праву обладает величием, превыше всего и всех."
+  }
+];
+// После первых 10 продолжаем добавлять:
+namesOfAllah.push(
+  {
+    arabic: "الْخَالِقُ",
+    translit: "Аль-Халик",
+    translation: "Творец",
+    explanation: "Создатель всего сущего из ничего. Он придаёт всему форму и определяет свойства каждого создания."
+  },
+  {
+    arabic: "الْبَارِئُ",
+    translit: "Аль-Барий",
+    translation: "Созидатель",
+    explanation: "Тот, кто приводит творения в существование в их совершенной форме, отличающейся от других."
+  },
+  {
+    arabic: "الْمُصَوِّرُ",
+    translit: "Аль-Мусаввир",
+    translation: "Предающий облик",
+    explanation: "Дарует каждому созданию его уникальную внешность и качества, не похожие на других."
+  },
+  {
+    arabic: "الْغَفَّارُ",
+    translit: "Аль-Гаффар",
+    translation: "Очащающе-Прощающий",
+    explanation: "Постоянно прощает грехи своих рабов, если они раскаиваются и обращаются к Нему."
+  },
+  {
+    arabic: "الْقَهَّارُ",
+    translit: "Аль-Каххар",
+    translation: "Всепреодолевающий",
+    explanation: "Имеет абсолютную власть и силу, перед которой все творения покоряются."
+  },
+  {
+    arabic: "الْوَهَّابُ",
+    translit: "Аль-Ваххаб",
+    translation: "Дарующий",
+    explanation: "Постоянно и безвозмездно одаривает творения всеми благами и милостями."
+  },
+  {
+    arabic: "الرَّزَّاقُ",
+    translit: "Ар-Раззаку",
+    translation: "Обеспечивающий пропитанием",
+    explanation: "Обеспечивает пропитанием, уделом и средствами для жизни всех своих творений."
+  },
+  {
+    arabic: "الْفَتَّاحُ",
+    translit: "Аль-Фаттах",
+    translation: "Открывающий",
+    explanation: "Открывает двери милостей, удачи и знаний своим созданиям; решает трудности."
+  },
+  {
+    arabic: "اَلْعَلِيمُ",
+    translit: "Аль-‘Алим",
+    translation: "Всезнающий",
+    explanation: "Знает всё скрытое и явное, прошлое, настоящее и будущее."
+  },
+  {
+    arabic: "الْقَابِضُ",
+    translit: "Аль-Кабид",
+    translation: "Сжимающий",
+    explanation: "Ограничивающий удел, сжимающий души и обладающий властью ограничивать дары."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الْبَاسِطُ",
+    translit: "Аль-Басит",
+    translation: "Дарующий изобилие",
+    explanation: "Тот, кто расширяет удел, даёт облегчение и щедро одаривает кого пожелает."
+  },
+  {
+    arabic: "الْخَافِضُ",
+    translit: "Аль-Хафид",
+    translation: "Унижающий",
+    explanation: "Тот, кто унижает и принижает гордецов и нечестивцев по Своей мудрости."
+  },
+  {
+    arabic: "الرَّافِعُ",
+    translit: "Ар-Рафиа’",
+    translation: "Возвышающий",
+    explanation: "Тот, кто возвышает достоинства и положения своих рабов, поднимает тех, кого пожелает."
+  },
+  {
+    arabic: "الْمُعِزُّ",
+    translit: "Аль-Му‘изз",
+    translation: "Дарующий честь",
+    explanation: "Тот, кто одаряет честью, силой и достоинством тех, кого пожелает."
+  },
+  {
+    arabic: "المُذِلُّ",
+    translit: "Аль-Мудзилль",
+    translation: "Унижает",
+    explanation: "Тот, кто унижает, подвергает бесчестью по Своему решению."
+  },
+  {
+    arabic: "السَّمِيعُ",
+    translit: "Ас-Сами‘",
+    translation: "Всеслышащий",
+    explanation: "Слышащий всё — слова, мысли и желания — открытое и скрытое."
+  },
+  {
+    arabic: "الْبَصِيرُ",
+    translit: "Аль-Басир",
+    translation: "Всевидящий",
+    explanation: "Видит всё в мельчайших деталях; ничто не скроется от Его взора."
+  },
+  {
+    arabic: "الْحَكَمُ",
+    translit: "Аль-Хакам",
+    translation: "Справедливый Судья",
+    explanation: "Решает между Своими рабами по справедливости, никому не причиняя несправедливости."
+  },
+  {
+    arabic: "الْعَدْلُ",
+    translit: "Аль-‘Адль",
+    translation: "Справедливый",
+    explanation: "Абсолютная справедливость Господа: всё, что Он решает и предписывает — истина."
+  },
+  {
+    arabic: "اللَّطِيفُ",
+    translit: "Аль-Латиф",
+    translation: "Нежный, Проникающий во все тайны",
+    explanation: "Заботливый и мягкий по отношению к Своим рабам, знает самые сокровенные подробности."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الْخَبِيرُ",
+    translit: "Аль-Хабир",
+    translation: "Осведомлённый",
+    explanation: "Имеет совершенные знания о каждом деле и о тончайших деталях, которые скрыты от других."
+  },
+  {
+    arabic: "الْحَلِيمُ",
+    translit: "Аль-Халим",
+    translation: "Кроткий, Терпеливый",
+    explanation: "Терпеливо сдерживает гнев, не наказывает сразу за проступки, давая возможность раскаяться."
+  },
+  {
+    arabic: "الْعَظِيمُ",
+    translit: "Аль-Азим",
+    translation: "Величайший",
+    explanation: "Величие и могущество Его безграничны и превышают всякое представление."
+  },
+  {
+    arabic: "الْغَفُورُ",
+    translit: "Аль-Гафур",
+    translation: "Всем прощающий",
+    explanation: "Постоянно прощает самые многочисленные и большие грехи тем, кто кается."
+  },
+  {
+    arabic: "الشَّكُورُ",
+    translit: "Аш-Шакур",
+    translation: "Благодарящий",
+    explanation: "Вознаграждает за малое добро великой наградой. Признаёт и ценит любое деяние."
+  },
+  {
+    arabic: "الْعَلِيُّ",
+    translit: "Аль-Алию",
+    translation: "Возвышенный",
+    explanation: "Превыше всего и всех в Своей сущности, атрибутах и власти."
+  },
+  {
+    arabic: "الْكَبِيرُ",
+    translit: "Аль-Кабир",
+    translation: "Великий",
+    explanation: "Истинно Великий, перед Кем ничто не имеет значения; Его величие не имеет границ."
+  },
+  {
+    arabic: "الْحَفِيظُ",
+    translit: "Аль-Хафиз",
+    translation: "Хранитель",
+    explanation: "Сохраняет всё сущее от разрушения, ведает каждой деталью бытия."
+  },
+  {
+    arabic: "المُقِيتُ",
+    translit: "Аль-Мукит",
+    translation: "Питающий",
+    explanation: "Обеспечивает каждое творение тем, что ему требуется для существования физически и духовно."
+  },
+  {
+    arabic: "الْحسِيبُ",
+    translit: "Аль-Хасиб",
+    translation: "Достаточный, Учётывающий",
+    explanation: "Достаточен для своих рабов во всём; ведущий счёт всему, что происходит."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الجَلِيلُ",
+    translit: "Аль-Джалиль",
+    translation: "Величественный",
+    explanation: "Обладает всей полнотой величия, достоинства и славы. Достоин поклонения и преклонения."
+  },
+  {
+    arabic: "الكَرِيمُ",
+    translit: "Аль-Карим",
+    translation: "Щедрый",
+    explanation: "Обладатель безграничной щедрости, дарует Своим рабам блага без меры."
+  },
+  {
+    arabic: "الرَّقِيبُ",
+    translit: "Ар-Ракиб",
+    translation: "Наблюдающий",
+    explanation: "Постоянно наблюдает за всеми своими созданиями, ничто не ускользает от Его взора."
+  },
+  {
+    arabic: "المُجِيبُ",
+    translit: "Аль-Муджиб",
+    translation: "Отзывчивый",
+    explanation: "Отвечает на мольбы тех, кто к Нему обращается, и исполняет их просьбы по Своей Мудрости."
+  },
+  {
+    arabic: "الْوَاسِعُ",
+    translit: "Аль-Васи’",
+    translation: "Всеобъемлющий",
+    explanation: "Его милость, знания и милосердие безграничны и охватывают всё сущее."
+  },
+  {
+    arabic: "الحَكِيمُ",
+    translit: "Аль-Хаким",
+    translation: "Мудрый",
+    explanation: "Его поступки наполнены мудростью и безошибочны. Он распоряжается всем по мудрости."
+  },
+  {
+    arabic: "الوَدُودُ",
+    translit: "Аль-Вадуд",
+    translation: "Любящий",
+    explanation: "Любящий рабов и достойный любви. Одаряет милостью и добром тех, кто близок к Нему."
+  },
+  {
+    arabic: "المَجِيدُ",
+    translit: "Аль-Маджид",
+    translation: "Славный",
+    explanation: "Обладает абсолютным величием и славой, достойный почестей и хвалы."
+  },
+  {
+    arabic: "البَاعِثُ",
+    translit: "Аль-Ба‘ис",
+    translation: "Воскрешающий",
+    explanation: "Оживит всех людей в День Суда для воздаяния за дела."
+  },
+  {
+    arabic: "الشَّهِيدُ",
+    translit: "Аш-Шахид",
+    translation: "Свидетель",
+    explanation: "Ему известно всё происходящее. Он свидетель всего открытого и скрытого."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الْحَقُّ",
+    translit: "Аль-Хакк",
+    translation: "Истинный",
+    explanation: "Он — истина, существование которого обязательно, и все, что исходит от Него, — истина."
+  },
+  {
+    arabic: "الْوَكِيلُ",
+    translit: "Аль-Вакил",
+    translation: "Покровитель, Доверенный",
+    explanation: "Полностью ведает всеми делами своих творений и управляет ими с мудростью."
+  },
+  {
+    arabic: "الْقَوِيُّ",
+    translit: "Аль-Кавийю",
+    translation: "Всесильный",
+    explanation: "Обладает абсолютной и совершенной силой, не испытывая в этом ни усталости, ни слабости."
+  },
+  {
+    arabic: "الْمَتِينُ",
+    translit: "Аль-Матин",
+    translation: "Твердый, Крепкий",
+    explanation: "Крепкий, неисчерпаемой силы и могущества, ничто не может Его одолеть или ослабить."
+  },
+  {
+    arabic: "الْوَلِيُّ",
+    translit: "Аль-Валий",
+    translation: "Покровитель, Опекун",
+    explanation: "Заботится и защищает своих верующих рабов, ведет и поддерживает их в добром."
+  },
+  {
+    arabic: "الْحَمِيدُ",
+    translit: "Аль-Хамид",
+    translation: "Достохвальный",
+    explanation: "Достоин всякой хвалы за Свои совершенства, милости и щедрость."
+  },
+  {
+    arabic: "الْمُحْصِي",
+    translit: "Аль-Мухси",
+    translation: "Подсчитывающий",
+    explanation: "Ведет совершенно точный счет всему — поступкам, существам, событиям — ничего не упускает."
+  },
+  {
+    arabic: "الْمُبْدِئُ",
+    translit: "Аль-Мубди’",
+    translation: "Начинающий, Созидающий",
+    explanation: "Создаёт всё впервые, придает бытие без всякого примера."
+  },
+  {
+    arabic: "الْمُعِيدُ",
+    translit: "Аль-Му’ид",
+    translation: "Возвращающий к жизни",
+    explanation: "Воскрешает умерших и возвращает созданное в прежнее состояние."
+  },
+  {
+    arabic: "الْمُحْيِي",
+    translit: "Аль-Мухий",
+    translation: "Оживляющий",
+    explanation: "Дарующий жизнь неживому, оживляет сердца верой и знанием, а также все сущее."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "اَلْمُمِيتُ",
+    translit: "Аль-Мумит",
+    translation: "Умерщвляющий",
+    explanation: "Тот, кто лишает жизни; никто не избежит смерти без Его воли."
+  },
+  {
+    arabic: "الْحَيُّ",
+    translit: "Аль-Хайй",
+    translation: "Вечно живой",
+    explanation: "Обладает абсолютной, совершенной и вечной жизнью, неподвластной смерти или упадку."
+  },
+  {
+    arabic: "الْقَيُّومُ",
+    translit: "Аль-Кайюм",
+    translation: "Самостоятельный, Поддерживающий всё",
+    explanation: "Существует сам по себе и постоянно поддерживает существование всего другого."
+  },
+  {
+    arabic: "الْوَاجِدُ",
+    translit: "Аль-Ваджид",
+    translation: "Находящий всё что желает",
+    explanation: "Нет для Него ничего невозможного, всё найдёт и сможет осуществить."
+  },
+  {
+    arabic: "الْمَاجِدُ",
+    translit: "Аль-Маджид",
+    translation: "Великолепный, Благороднейший",
+    explanation: "Обладает безупречной славой, благородством и широтой милости."
+  },
+  {
+    arabic: "الْواحِدُ",
+    translit: "Аль-Вахид",
+    translation: "Единый",
+    explanation: "Один-единственный в Своей сущности, именах, атрибутах и деяниях, не имеющий сотоварища."
+  },
+  {
+    arabic: "اَلاَحَدُ",
+    translit: "Аль-Ахад",
+    translation: "Один, Единственный",
+    explanation: "Абсолютно Единственный, неделимый и неповторимый, не похожий ни на кого среди творений."
+  },
+  {
+    arabic: "الصَّمَدُ",
+    translit: "Ас-Самад",
+    translation: "Самодостаточный, Господин",
+    explanation: "К Нему обращаются во всех нуждах. Не нуждается ни в ком и ни в чём, а все нуждаются в Нём."
+  },
+  {
+    arabic: "الْقَادِرُ",
+    translit: "Аль-Кадир",
+    translation: "Всесильный, Всемогущий",
+    explanation: "Может сделать всё, что пожелает; ничто не выходит за пределы Его могущества."
+  },
+  {
+    arabic: "الْمُقْتَدِرُ",
+    translit: "Аль-Муктадир",
+    translation: "Всемогущий, Обладающий совершенной мощью",
+    explanation: "Владеет абсолютной и совершенной силой осуществлять любые свои решения."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الْمُقَدِّمُ",
+    translit: "Аль-Мукаддим",
+    translation: "Продвигающий вперёд",
+    explanation: "Продвигает вперёд тех, кого пожелает, в знаниях, положении, достоинстве и событиях."
+  },
+  {
+    arabic: "الْمُؤَخِّرُ",
+    translit: "Аль-Муаххир",
+    translation: "Отодвигающий, Удерживающий",
+    explanation: "Отодвигает назад и задерживает кого или что пожелает по Своей мудрости."
+  },
+  {
+    arabic: "الأوَّلُ",
+    translit: "Аль-Авваль",
+    translation: "Первый",
+    explanation: "Не имеет начала, существовал всегда, до всего; ничто не предшествовало Ему."
+  },
+  {
+    arabic: "الآخِرُ",
+    translit: "Аль-Ахир",
+    translation: "Последний",
+    explanation: "Не имеет конца, Его существование вечно, всё остальное исчезнет, кроме Него."
+  },
+  {
+    arabic: "الظَّاهِرُ",
+    translit: "Аз-Захир",
+    translation: "Явный",
+    explanation: "Его существование и могущество очевидны, превыше всего, ничто не выше Него."
+  },
+  {
+    arabic: "الْبَاطِنُ",
+    translit: "Аль-Батин",
+    translation: "Скрытый",
+    explanation: "Скрыт от взоров творений, знает все тайны всего сущего."
+  },
+  {
+    arabic: "الْوَالِي",
+    translit: "Аль-Вали",
+    translation: "Покровитель, Управитель",
+    explanation: "Контролирует, управляет и распоряжается всем в мироздании, по Своей мудрости."
+  },
+  {
+    arabic: "الْمُتَعَالِي",
+    translit: "Аль-Мута‘али",
+    translation: "Превознесённый",
+    explanation: "Превышает по своей сущности и достоинству все творения."
+  },
+  {
+    arabic: "الْبَرُّ",
+    translit: "Аль-Барр",
+    translation: "Благодетельный",
+    explanation: "Истинно добр ко всем своим рабам, особенно к тем, кто стремится к добру и праведности."
+  },
+  {
+    arabic: "التَّوَّابُ",
+    translit: "Ат-Таувваб",
+    translation: "Многократно принимающий покаяние",
+    explanation: "Постоянно принимает покаяние Свих рабов, даже если они ошибаются снова и снова."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الْمُنْتَقِمُ",
+    translit: "Аль-Мунтаким",
+    translation: "Мстящий",
+    explanation: "Осуществляет возмездие над теми, кто нарушает Его веления и отвергает истину."
+  },
+  {
+    arabic: "العَفُوُّ",
+    translit: "Аль-'Афувв",
+    translation: "Всепрощающий",
+    explanation: "Избавляет от наказания, стирает грехи и не спрашивает за совершённые проступки тех, кто кается."
+  },
+  {
+    arabic: "الرَّؤُوفُ",
+    translit: "Ар-Рауф",
+    translation: "Сострадательный, Милосердный",
+    explanation: "Обладает особо мягкой и глубокосердечной милостью к своим созданиям."
+  },
+  {
+    arabic: "مَالِكُ الْمُلْكِ",
+    translit: "Малик уль-Мульк",
+    translation: "Владыка Царства",
+    explanation: "Владеет всем мирозданием, распоряжается всем в нём как пожелает."
+  },
+  {
+    arabic: "ذُو الْجَلاَلِ وَالإكْرَامِ",
+    translit: "Зуль-Джаляли-уаль-Икрам",
+    translation: "Обладатель Величия и Щедрости",
+    explanation: "Обладает совершенным величием и высшим достоинством, достоин всякого почтения и хвалы."
+  },
+  {
+    arabic: "المُقْسِطُ",
+    translit: "Аль-Муксит",
+    translation: "Беспристрастный",
+    explanation: "Делит, устанавливает справедливость между творениями, никого не обижая."
+  },
+  {
+    arabic: "الْجَامِعُ",
+    translit: "Аль-Джами’",
+    translation: "Собирающий",
+    explanation: "Соберёт творения в День Суда для воздаяния и исполняет все явления, которые пожелает."
+  },
+  {
+    arabic: "الغنيُّ",
+    translit: "Аль-Ганий",
+    translation: "Богатый, Самодостаточный",
+    explanation: "Не нуждается ни в ком и ни в чём, а все творения полностью нуждаются в Нём."
+  },
+  {
+    arabic: "المُغني",
+    translit: "Аль-Мугний",
+    translation: "Обогащающий",
+    explanation: "Обеспечивает кого пожелает достатком, богатством и средствами к жизни."
+  },
+  {
+    arabic: "المَانِعُ",
+    translit: "Аль-Мани’",
+    translation: "Удерживающий",
+    explanation: "Удерживает от своих творений вред, препятствует несчастьям и лишает некоторых людей благ."
+  }
+);
+namesOfAllah.push(
+  {
+    arabic: "الضَّارُّ",
+    translit: "Ад-Дарр",
+    translation: "Причиняющий вред",
+    explanation: "Может причинить вред по Своей мудрости тому, кого пожелает; ни один вред не приходит без Его воли."
+  },
+  {
+    arabic: "النَّافِعُ",
+    translit: "Ан-Нафи’",
+    translation: "Дарующий пользу",
+    explanation: "Тот, кто приносит пользу своим созданиям; никто не может принести пользу без Его воли."
+  },
+  {
+    arabic: "النُّورُ",
+    translit: "Ан-Нур",
+    translation: "Свет",
+    explanation: "Источник всякого света – материального и духовного, выводит творения из мрака к свету."
+  },
+  {
+    arabic: "الْهَادِي",
+    translit: "Аль-Хади",
+    translation: "Направляющий на прямой путь",
+    explanation: "Указывает и дарует прямой путь тем, кого пожелает, ведёт к истине и праведности."
+  },
+  {
+    arabic: "الْبَدِيعُ",
+    translit: "Аль-Бади’",
+    translation: "Изумительный Создатель",
+    explanation: "Создает всё необыкновенно, поразительно, без всякого примера ранее."
+  },
+  {
+    arabic: "اَلْبَاقِي",
+    translit: "Аль-Баки",
+    translation: "Вечный",
+    explanation: "Существующий вечно, без конца; всё кроме Него исчезнет."
+  },
+  {
+    arabic: "الْوَارِثُ",
+    translit: "Аль-Уарис",
+    translation: "Наследующий",
+    explanation: "Останется после исчезновения всего; вся власть и имущество перейдёт к Нему."
+  },
+  {
+    arabic: "الرَّشِيدُ",
+    translit: "Ар-Рашид",
+    translation: "Направляющий",
+    explanation: "Вразумляющий, управляет всеми делами самым мудрым и наилучшим образом."
+  },
+  {
+    arabic: "الصَّبُورُ",
+    translit: "Ас-Сабур",
+    translation: "Терпеливейший",
+    explanation: "Безгранично терпелив, не спешит наказывать, даёт людям время для покаяния."
+  }
+);
+  let current = 0;
+
+  function renderCard() {
+    const name = namesOfAllah[current];
+    document.getElementById('card-front').innerHTML = `
+      <span class="arabic">${name.arabic}</span>
+      <div class="translit">${name.translit}</div>
+    `;
+    document.getElementById('card-back').innerHTML = `
+      <span class="translation">${name.translation}</span>
+      <div class="explanation">${name.explanation}</div>
+    `;
+    document.getElementById('counter').textContent = `${current + 1} / ${namesOfAllah.length}`;
+    document.getElementById('flashcard').classList.remove('flipped');
+  }
+
+  document.getElementById('prev').onclick = function() {
+    if (current > 0) current--;
+    else current = namesOfAllah.length - 1;
+    renderCard();
+  };
+  document.getElementById('next').onclick = function() {
+    if (current < namesOfAllah.length - 1) current++;
+    else current = 0;
+    renderCard();
+  };
+
+  // Переворот карточки по клику/пробелу
+  document.getElementById('flashcard').onclick = function() {
+    this.classList.toggle('flipped');
+  };
+  document.getElementById('flashcard').addEventListener('keydown', function(e){
+    if (e.code === "Space") {
+      this.classList.toggle('flipped');
+      e.preventDefault();
+    }
+  })
+
+  // Для первого отображения
+  renderCard();
+
+</script>
+</body>
+</html>
