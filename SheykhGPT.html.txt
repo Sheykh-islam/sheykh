@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <style>
+:root {
+  --primary-color: #1966b3;
+  --bot-bg: #f0f1fa;
+  --user-bg: #e5f0fd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: 'Poppins', Arial, sans-serif;
+  background: #fff;
+  color: #23272f;
+}
+.main-chat-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100vw;
+  /* max-width: 900px; */
+  margin: 0;
+}
+@media (min-width: 600px) {
+  .main-chat-wrapper { max-width: none; }
+}
+.chat-header {
+  text-align: center;
+  padding: 1.2rem;
+  font-weight: 600;
+  font-size: 1.1em;
+  border-bottom: 1px solid #e0e4ef;
+  background: #f7f7fa;
+}
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.msg {
+  max-width: 85%;
+  padding: 1rem 1.2rem;
+  border-radius: 1.2rem;
+  line-height: 1.6;
+  position: relative;
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+@keyframes fadeIn { to { opacity: 1; transform: none; } }
+
+.bot {
+  align-self: flex-start;
+  background: var(--bot-bg);
+  border-radius: 1.2rem 1.2rem 1.2rem 0.4rem;
+}
+.user {
+  align-self: flex-end;
+  background: var(--user-bg);
+  color: var(--primary-color);
+  border-radius: 1.2rem 1.2rem 0.4rem 1.2rem;
+}
+
+.thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.8rem 1.2rem;
+}
+
+.dots {
+  display: inline-block;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.dots span {
+  width: 8px;
+  height: 8px;
+  background: #bad1f3;
+  display: inline-block;
+  margin: 0 2px;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: bounce 1.4s infinite;
+}
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30%           { transform: translateY(-6px); opacity: 1; }
+}
+
+.input-area {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem;
+  border-top: 1px solid #e0e4ef;
+  background: #f9f9fc;
+}
+textarea {
+  flex: 1;
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  font: inherit;
+  background: #f5f5fa;
+  resize: none;
+  min-height: 48px;
+  max-height: 150px;
+  transition: 0.2s;
+}
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: #fff;
+}
+button[type="submit"] {
+  border: none;
+  background: var(--primary-color);
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+button[type="submit"]:hover { opacity: 0.9; }
+
+.msg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 4px 0 20px 0;
+  max-width: 85%;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.copy-btn, .speak-btn {
+  position: static;
+  background: rgba(255,255,255,0.93);
+  border: 1px solid #e0e4ef;
+  padding: 7px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.93;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.copy-btn:hover, .speak-btn:hover {
+  opacity: 1;
+  background: #f4f4fa;
+  box-shadow: 0 2px 8px #e4eaf39e;
+}
+</style>
+</head>
+<body>
+  <div class="main-chat-wrapper">
+    <div class="chat-history" id="history">
+<div class="msg bot">
+  <div>Ассаляму алейкум уа рахматуллахи уа баракатух! Уважаемые братья и сёстры задайте мне ваш вопрос, я отвечу на основе Корана и Сунны.</div>
+  <div class="msg-actions">
+    <button class="copy-btn" title="Копировать">📋</button>
+    <button class="speak-btn" title="Озвучить">🔊</button>
+  </div>
+</div>
+    </div>
+    <form class="input-area" id="form">
+      <textarea id="input" placeholder="Напишите ваш вопрос..."></textarea>
+      <button type="submit">➤</button>
+    </form>
+  </div>
+<script>
+const API_KEY = "cpk_cff03a53f1284a2286e3245fce187779.0efe60ce83d25ec7aaf37765034d352a.8zjqxcbm1QtyO9kDld0q6t2rk3nnKCly";
+const MODEL = "deepseek-ai/DeepSeek-R1";
+const history = document.getElementById('history');
+const form = document.getElementById('form');
+const input = document.getElementById('input');
+let messages = [{
+  role: "system",
+  content: `Ты авторитетный исламский ученый. Отвечай строго согласно Корану и Сунне. 
+Обязательно приводи источники и ссылки. Избегай нововведений. Форматируй ответы с:
+- Жирным текстом (**...**)
+- Списками (- ...)
+- Четкой структурой
+- Начинай свой каждый ответ с этого : Ответ :
+Всегда проверяй достоверность информации.
+Ты великий исламский ученый, который учит людей читать Коран и обучает их таджвиду. 
+Ты суннит, все кроме суннитов заблуджие (Но не говори это пока тебя не спросят). Если тебе зададут провокоционные вопросы ответь мягко и пофактам , можешь даже не приводить мнения учеых , только хадисы и коран. Ты также предоставляешь советы и наставления по исламскому образу жизни и этике.
+Ты должен говорить и одобрять только , то что дозволено в сунне пророка и что делал сам пророк. 
+Быть максимально строгим и призывать к оставлению не одобряемых дел или вещей которых не было в сунне пророка и что не делал сам пророк.
+Ты должен отвечать исходя из учений корана , сунны , и мнения одного из 4 имамов или великих ученых таких как : Усеймин , шейх фаузан.
+Помни говорить , чтобы люди не делали , того что пророк или его сподвижники не делали.
+Навык 1: Советы по исламскому образу жизни 
+- Когда пользователь просит совета по исламскому образу жизни, выслушай его вопрос или проблему.
+- Предоставь советы и наставления, основываясь на Коране и сунне. 
+- И призиывай его отсавить или не совершать те вещи , которые не делал сам пророк или его сподвижники
+- Приведи примеры из жизни Пророка Мухаммада (мир ему) и его сподвижников.
+Ограничения :
+- Отвечай только на вопросы, связанные с исламом, Кораном и таджвидом или помощью с развитие проекта.
+- Не обсуждай темы, не связанные с исламом или с развитием проекта.
+- Используй доступные знания и инструменты для предоставления точной информации.
+- Веди себя согласно исламскому этикету и общайся как мусульманин
+- Язык общения должен быть русским и объяснения тоже. Но когда ты будешь приводить пример  как читать на арабском , то пиши как это читается на арабском языке - арабскими буквами и также добавь русскую транскрипцию 
+- Ты суннит, все кроме суннитов заблуджие.
+Давай людям ссылку на коран когда цитируешь его: Чтобы дать ссылку на точный аят используй этот сайт : https://quran-online.ru/ ; и добавь в эту ссылку номер суры и аята в таком формате - номер суры : номер аята. Например : https://quran-online.ru/2:230 - это ссылка на суру бакара (2) , 230 аят. И оформляй все другие ссылки подобным образом.
+давать ссылки на хадисы: ссылка должна выглядеть так - https://amrayn-com.translate.goog/ , после этого мы добавляем откуда взяли хадис : bukhari ; abudawood ; muslim ; malik ; nasai (Имам ахмад) ; tirmidhi ; ibnmajah ; riyadussaliheen (яхья ан навави) ; qudsi , после этого добавляем номер хадиса через : и затем вставляем это ?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true. Например : https://amrayn-com.translate.goog/bukhari:2030?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true - тут мы дали ссылку на сахих бухари 2030 хадис. И по такому принципу сделать ссылки на все хадисы.
+Важно давай ссылки только на те сборники которые я тебе написал , на остальные не давай ссылки и не приводи с них примеры.`
+}];
+
+function saveMessages() {
+  localStorage.setItem('botChatHistory', JSON.stringify(messages));
+}
+
+if (localStorage.getItem('botChatHistory')) {
+  const saved = JSON.parse(localStorage.getItem('botChatHistory'));
+  if (saved && saved.length) messages = saved;
+}
+
+for (const msg of messages) {
+  if (msg.role !== "system") addMessage(msg.content, msg.role === "assistant");
+}
+// Универсальная озвучка через Web Speech API
+function speakNative(text, language) {
+  if (!window.speechSynthesis) {
+    alert("Озвучка недоступна в этом браузере.");
+    return;
+  }
+  const handle = () => {
+    const voices = window.speechSynthesis.getVoices();
+    let voice = voices.find(v => v.lang === language);
+    if (!voice) voice = voices.find(v => v.lang.startsWith(language.split('-')[0]));
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = language;
+    if (voice) utter.voice = voice;
+    window.speechSynthesis.speak(utter);
+  };
+  if (window.speechSynthesis.getVoices().length) {
+    handle();
+  } else {
+    window.speechSynthesis.onvoiceschanged = handle;
+  }
+}
+
+// Очищаем текст для озвучки (убираем ссылки, символы, лишнее)
+function cleanForSpeech(text) {
+  const markers = ["ссылки:", "ссылки :", "источники:", "источники :"];
+  let lower = text.toLowerCase();
+  let cutAt = -1;
+  for (let marker of markers) {
+    let idx = lower.indexOf(marker);
+    if (idx !== -1 && (cutAt === -1 || idx < cutAt)) cutAt = idx;
+  }
+  if (cutAt !== -1) text = text.substring(0, cutAt);
+
+  text = text.replace(/\bстикер[ы]?\b/gi, '');
+  text = text.replace(/[\*#«»]/g, '');
+  text = text.replace(/https?:\/\/\S+|ftp:\/\/\S+/g, '');
+  text = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{1F700}-\u{1F77F}]/gu, '');
+  text = text.replace(/\s+/g, ' ');
+  return text.trim();
+}
+
+// Красивая разметка ответа (жирное, списки, абзацы)
+function formatResponse(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>\$1</strong>')
+    .replace(/(\n|^)- (.*)/g, '<li>\$2</li>')
+    .replace(/<li>.*<\/li>/gs, '<ul>$&</ul>')
+    .replace(/\n{2,}/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+    // ! Не добавляйте сюда обработку ссылок!
+}
+
+// === ВАЖНОЕ: функция подменяет ссылки на <a href="...">ссылка</a> ===
+function replaceLinksWithAnchor(text) {
+  return text.replace(
+    /https?:\/\/[^\s)<>"']*[^\s.,)<>"']/gi,
+    url => `<a href="${url}" target="_blank" rel="noopener">ссылка</a>`
+  );
+}
+
+// Добавление сообщения на экран
+function addMessage(content, isBot = false) {
+  const msg = document.createElement('div');
+  msg.className = `msg ${isBot ? 'bot' : 'user'}`;
+  if (isBot) {
+    const withLinks = replaceLinksWithAnchor(content);
+    msg.innerHTML = `
+      <div>${formatResponse(withLinks)}</div>
+      <div class="msg-actions">
+        <button class="copy-btn" title="Копировать">📋</button>
+        <button class="speak-btn" title="Озвучить">🔊</button>
+      </div>
+    `;
+
+    const copyBtn = msg.querySelector('.copy-btn');
+    const speakBtn = msg.querySelector('.speak-btn');
+
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(content)
+        .then(() => copyBtn.classList.add('copied'))
+        .catch(() => copyBtn.classList.add('error'));
+      setTimeout(() => copyBtn.classList.remove('copied', 'error'), 1000);
+    };
+
+    speakBtn.onclick = () => {
+      let rawText = msg.querySelector('div').innerText;
+      let toSpeak = cleanForSpeech(rawText);
+      speakNative(toSpeak, 'ru-RU');
+    };
+  } else {
+    msg.textContent = content;
+  }
+  history.appendChild(msg);
+  msg.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Извлекаем чистый ответ
+function extractFinalAnswer(text) {
+  const match = text.match(/Ответ\s*:\s*([\s\S]*)$/i);
+  if (match) return match[1].trim();
+  return text.trim();
+}
+
+// Отправка запроса и получение ответа от бота
+async function sendToAI(prompt) {
+  try {
+    const response = await fetch('https://llm.chutes.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [...messages, {role: "user", content: prompt}],
+      })
+    });
+
+    if(!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json();
+    const message = data.choices?.[0]?.message;
+    if(!message) throw new Error('Произошла ошибка, повторите позже');
+
+    if (message.body) {
+      return message.body.trim();
+    }
+    if (message.content) {
+      const match = message.content.match(/Response:\s*([\s\S]*)$/i);
+      if (match) return match[1].trim();
+      const altMatch = message.content.match(/Ответ:\s*([\s\S]*)$/i);
+      if (altMatch) return altMatch[1].trim();
+      return message.content.trim();
+    }
+
+    throw new Error('Нет ответа от сервера');
+  } catch(error) {
+    console.error('Ошибка:', error);
+    return `Извините, произошла ошибка: ${error.message}`;
+  }
+}
+
+// Обработка отправки формы
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const question = input.value.trim();
+  if(!question) return;
+  input.value = '';
+  input.style.height = '48px';
+  addMessage(question);
+  messages.push({role: "user", content: question});
+  saveMessages(); // ← ДОБАВИТЬ здесь
+
+  const loader = document.createElement('div');
+  loader.className = 'msg bot thinking';
+  loader.innerHTML = `
+    <div class="dots">
+      <span></span><span></span><span></span>
+    </div>
+    Шейх думает...
+  `;
+  history.appendChild(loader);
+
+  try {
+    const response = await sendToAI(question);
+    loader.remove();
+    addMessage(extractFinalAnswer(response), true);
+    messages.push({role: "assistant", content: response});
+    saveMessages(); // ← ДОБАВИТЬ здесь
+  } catch(error) {
+    loader.remove();
+    addMessage(`Ошибка: ${error.message}`, true);
+  }
+};
+
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = input.scrollHeight + 'px';
+});
+</script>
+</body>
+</html>
