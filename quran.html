@@ -20,13 +20,14 @@ body {
     margin: 0;
 }
 .sura-table {
-    max-width: 420px;
+    max-width: 420px;   /* или 410px, или другое аккуратное число */
     width: 100%;
-    margin: 1px auto;
+    margin: 12px auto 24px auto;
     background: var(--white-bg);
-    border-radius: 14px;
+    border-radius: 16px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.11);
-    padding: 4px 18px 18px 14px;
+    padding: 16px 16px 14px 13px;
+    /* ... */
 }
 .sura-row {
     display: flex;
@@ -125,10 +126,12 @@ nav a:focus {
 }
 @media (max-width: 600px) {
     .sura-table {
-        padding: 8px 6px 16px 6px;
-        max-width: 99vw;       /* не больше ширины экрана */
-        margin: 0 auto;
+        padding: 8px 2vw 15px 2vw;
+        /* ВНИМАНИЕ! НЕ УБИРАЕМ max-width! */
+        max-width: 420px;
+        margin: 10px auto 18px auto;
     }
+}
     .sura-row {
         font-size: 15px;
         padding: 9px 0;
@@ -145,14 +148,6 @@ nav a:focus {
     .sura-ayat {
         font-size: 0.93rem;
         padding: 0 1vw;
-    }
-    .sura-table {
-        max-width: 100%;
-        width: 99%;
-        margin: 0 auto;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-        padding: 3vw 2vw 3vw 2vw;
     }
     .sura-row {
         font-size: 15px;
