@@ -1055,12 +1055,20 @@
     </div>
     <div class="sura-ar">الناس</div>
 </div>
-    </div>
-    <script>
-        function goToSura(num) {
-            // Открывает quran.com с нужной сурой прямо в этой вкладке
-            window.location.href = `https://quran.com/ru/${num}?translations=45`;
-        }
-    </script>
+   <div class="menu">
+  <button onclick="goHome()">Домой</button>
+  <!-- и так далее -->
+</div>
+<iframe id="suraFrame" src="https://quran.com/ru/1?translations=45" style="width:100%;height:90vh;border:none;"></iframe>
+
+<script>
+function goHome() {
+  window.location.href = "https://sheykh-islam.github.io/sheykh/";
+}
+
+function goToSura(num) {
+  document.getElementById('suraFrame').src = `https://quran.com/ru/${num}?translations=45`;
+}
+</script>
 </body>
 </html>
