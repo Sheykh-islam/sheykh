@@ -31,6 +31,17 @@ html, body {
   max-width: 900px;
   margin: 0 auto;
 }
+.msg {
+      max-width: 85%;
+      padding: 1rem 1.2rem;
+      border-radius: 1.2rem;
+      line-height: 1.6;
+      position: relative;
+      animation: fadeIn 0.3s ease-out forwards;
+      opacity: 0;
+      transform: translateY(10px);
+      word-break: break-word;    /* <-- ДОБАВЛЕННОЕ СВОЙСТВО */
+    }
 @media (max-width: 600px) {
   html, body {
     font-size: 15px;
