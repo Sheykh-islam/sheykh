@@ -2,33 +2,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список сур</title>
     <style>
         body {
             background: #ececec;
             font-family: Arial, Verdana, Tahoma, sans-serif;
-            padding: 30px;
+            padding: 15px;
+            margin: 0;
         }
         .sura-table {
-            max-width: 420px;
+            width: 100%;
+            max-width: 100%;
             margin: 1px auto;
             background: #fff;
             border-radius: 14px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.11);
-            padding: 4px 38px 24px 24px;
+            padding: 15px !important;
+            box-sizing: border-box;
         }
         .sura-row {
             display: flex;
             align-items: flex-start;
             border-bottom: 1px solid #efefef;
-            padding: 14px 0 14px 0;
+            padding: 14px 0;
             font-size: 18px;
             transition: background 0.15s;
             text-decoration: none;
             color: inherit;
             cursor: pointer;
         }
-        .sura-row:last-child { border-bottom: none;}
+        .sura-row:last-child { 
+            border-bottom: none;
+        }
         .sura-num {
             font-weight: bold;
             color: #369e6f;
@@ -43,24 +49,25 @@
             flex-direction: column;
             margin-left: 10px;
         }
-.sura-head {
-    max-width: 500px;
-    margin: 16px auto 18px auto;
-    text-align: center;
-}
-.sura-title {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #218365;
-    margin-bottom: 9px;
-}
-.sura-ayat {
-    font-size: 1.02rem;
-    color: #50575c;
-    font-style: italic;
-    opacity: 0.92;
-    letter-spacing: 0.03em;
-}
+        .sura-head {
+            max-width: 500px;
+            margin: 16px auto 18px;
+            text-align: center;
+        }
+        .sura-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #218365;
+            margin-bottom: 9px;
+        }
+        .sura-ayat {
+            font-size: 1.02rem;
+            color: #50575c;
+            font-style: italic;
+            opacity: 0.92;
+            letter-spacing: 0.03em;
+            line-height: 1.4;
+        }
         .sura-name {
             font-weight: bold;
             font-size: 21px;
@@ -70,35 +77,59 @@
         .sura-ru {
             color: #888;
             font-size: 15px;
+            margin-top: 2px;
         }
         .sura-ar {
             font-size: 23px;
             font-family: 'Amiri', 'Scheherazade', serif;
             color: #095710;
-            letter-spacing: 1px;
             direction: rtl;
-            min-width: 95px;
             text-align: right;
-            align-self: flex-end;
             line-height: 1;
+            min-width: 95px;
+            align-self: flex-end;
         }
         .sura-row:hover {
             background: #e7fff2;
             box-shadow: 0 2px 8px rgba(54, 158, 111, 0.07);
         }
-        @media (max-width: 650px) {
-            .sura-table {padding: 19px;}
-            .sura-ar {font-size: 23px;}
-            .sura-name {font-size: 21px;}
+
+        @media (max-width: 480px) {
+            .sura-ar {
+                font-size: 18px;
+                min-width: 70px;
+            }
+            .sura-name {
+                font-size: 18px;
+            }
+            .sura-num {
+                font-size: 16px;
+                width: 25px;
+            }
+            .sura-row {
+                padding: 10px 0;
+                font-size: 16px;
+            }
+            .sura-title {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            .sura-ayat {
+                font-size: 0.9rem;
+                padding: 0 10px;
+            }
+            .sura-ru {
+                font-size: 13px;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&display=swap">
 </head>
 <body>
-<div class="sura-head">
-    <div class="sura-title">Священный Коран</div>
-    <div class="sura-ayat">Когда читается Коран, то слушайте его и храните молчание, - быть может, вас помилуют (7:204)</div>
-</div>
+    <div class="sura-head">
+        <div class="sura-title">Священный Коран</div>
+        <div class="sura-ayat">Когда читается Коран, то слушайте его и храните молчание, - быть может, вас помилуют (7:204)</div>
+    </div>
     <div class="sura-table">
 <div class="sura-row" onclick="goToSura(1)">
     <div class="sura-num">1</div>
