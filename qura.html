@@ -187,6 +187,7 @@
       word-wrap: break-word;
       line-height: 1.6;
       text-align: center;
+      min-height: 42px;
     }
     .dua {
       font-family: 'Lateef', serif;
@@ -202,33 +203,78 @@
       margin-right: auto;
       text-align: center;
     }
-    .manual-loc-wrap {
-      margin: 10px auto 0 auto;
+    .manual-address-wrap {
+      margin: 11px auto 3px auto;
       text-align: center;
+      width: 93vw;
+      max-width: 320px;
+      display:block;
+      position: relative;
     }
-    .manual-loc-wrap input {
+    .manual-address-wrap input {
       font-size: 1em;
       border: 1px solid #c1daca;
       border-radius: 6px;
-      padding: 5px 8px;
-      width: 85px;
-      margin: 0 3px;
+      padding: 7px 9px;
+      width:65%;
+      max-width: 170px;
+      min-width:74px;
+      box-sizing: border-box;
     }
-    .manual-loc-wrap button {
+    .manual-address-wrap button {
       background: #ebb500;
       color: #fff;
       border: none;
       border-radius: 7px;
       font-size: 1em;
       font-weight: bold;
-      padding: 5px 12px;
+      padding: 7px 13px;
       margin-left: 5px;
       cursor: pointer;
       transition: background 0.14s;
       box-shadow: 0 1px 4px #ebb5001a;
     }
-    .manual-loc-wrap button:active, .manual-loc-wrap button:hover, .manual-loc-wrap button:focus {
+    .manual-address-wrap button:active, .manual-address-wrap button:hover, .manual-address-wrap button:focus {
       background: #c08a3d;
+    }
+    #addressStatus {
+      font-size: 0.96em;
+      color: #b81515;
+      min-height:21px;
+      margin-top: 4px;
+      text-align: center;
+    }
+    .suggestions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 40px;
+      max-height: 185px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #fff;
+      border: 1px solid #d6d6ba;
+      z-index: 20;
+      border-radius: 0 0 8px 8px;
+      font-size: 0.96em;
+      text-align: left;
+      box-shadow: 0 2px 8px #12806327;
+    }
+    .suggestion {
+      padding: 8px 11px;
+      cursor: pointer;
+      color: #166c43;
+      border-bottom: 1px solid #f0eee1;
+      transition: background 0.16s;
+      background: #fff;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .suggestion:last-child {
+      border-bottom: none;
+    }
+    .suggestion:hover, .suggestion.active {
+      background: #effff1;
     }
     .slider-rotate-wrap {
       margin: 10px auto 6px auto;
@@ -291,13 +337,16 @@
       <div class="compass-label-kaaba">قِبْلَة‎</div>
     </div>
     <div id="info">Загрузка вашего местоположения…</div>
-    <div class="manual-loc-wrap" id="manualLoc" style="display:none;">
-      <form onsubmit="return false;">
-        <input id="latInput" type="number" step="any" placeholder="Широта" required>
-        <input id="lngInput" type="number" step="any" placeholder="Долгота" required>
-        <button onclick="setManualLoc()">Установить</button>
+    <div class="manual-address-wrap" id="manualAddr">
+      <form onsubmit="return false;" autocomplete="off" style="position:relative">
+        <input id="addressInput" type="text" placeholder="Город, адрес или страна" required autocomplete="off">
+        <div id="suggestions" class="suggestions" style="display:none;"></div>
+        <button id="addrBtn" type="button">Установить</button>
       </form>
-      <div style="color:#827747; font-size:0.92em; margin-top:4px;">Введите свои координаты,<br> или, например, <a href='https://www.google.com/maps' target='_blank' style="color:#157a5a;text-decoration:underline;">найдите их на карте</a>.</div>
+      <div id="addressStatus"></div>
+      <div style="color:#827747; font-size:0.92em; margin-top:4px;">
+        Введите, например: <i>Москва</i>, <i>Ташкент</i>, <i>Paris, France</i> и т.д.
+      </div>
     </div>
     <div class="slider-rotate-wrap" id="sliderWrap" style="display:none;">
       Вращайте компас: <input type="range" min="0" max="359" value="0" id="angleSlider">
@@ -308,12 +357,13 @@
     <span style="font-size:0.95em; color:#867c53;"><br>О Аллах, обрати наши сердца к Твоей Кибле!</span>
   </div>
 <script>
-  // Координаты Каабы
   const kaaba = {lat: 21.4224779, lng: 39.8251832};
   let userLat = null, userLng = null, qibla = null, geoAvailable = false;
-  const manualLocDiv = document.getElementById('manualLoc');
-  const sliderWrap = document.getElementById('sliderWrap');
   const angleSlider = document.getElementById('angleSlider');
+  const addressInput = document.getElementById('addressInput');
+  const addressStatus = document.getElementById('addressStatus');
+  const suggestionsBox = document.getElementById('suggestions');
+  let suggestionList = [];
 
   function toRad(deg) { return deg * Math.PI / 180;}
   function toDeg(rad) { return rad * 180 / Math.PI;}
@@ -325,40 +375,12 @@
     let y = Math.sin(λK-λ);
     let x = Math.cos(φ)*Math.tan(φK) - Math.sin(φ)*Math.cos(λK-λ);
     let θ = Math.atan2(y, x);
-    // Азимут относительно Севера, по часовой стрелке
     return (toDeg(θ)+360)%360;
   }
   function showCompass(angle) {
     document.getElementById('needle').style.transform = `rotate(${angle}deg)`;
   }
 
-  function makeManualLocVisible() {
-    manualLocDiv.style.display = "";
-    document.getElementById('info').innerHTML = "Не удалось определить ваше местоположение.<br>Пожалуйста, введите свои координаты вручную!";
-    sliderWrap.style.display = geoAvailable ? "none" : "";
-  }
-
-  // Ввод координат вручную
-  window.setManualLoc = function() {
-    let lat = parseFloat(document.getElementById('latInput').value);
-    let lng = parseFloat(document.getElementById('lngInput').value);
-    if (isNaN(lat) || isNaN(lng)) {
-      alert("Пожалуйста, введите свои координаты");
-      return false;
-    }
-    userLat = lat;
-    userLng = lng;
-    qibla = getQiblaAngle(lat, lng);
-    geoAvailable = false;
-    manualLocDiv.style.display = "none";
-    document.getElementById('info').innerHTML =
-      "Ваш азимут на Киблу: <b>"+qibla.toFixed(2)+"&deg;</b> <br><span style='font-size:0.97em;'>Вы можете вращать компас вручную.<br>Стрелка указывает направление на Каабу.</span>";
-    // Показываем ползунок для ручного вращения
-    sliderWrap.style.display = "";
-    showCompass(qibla);
-  }
-
-  // Вручную вращать на ПК (если нет device orientation)
   angleSlider.addEventListener('input', function(){
     let angle = parseInt(this.value,10);
     if (userLat !== null && userLng !== null && qibla !== null) {
@@ -367,20 +389,11 @@
     }
   });
 
-  // Детектор поддержки компаса
-  function hasDeviceOrientation() {
-    // Проверим поддержку событий компаса
-    return ('DeviceOrientationEvent' in window) || ('AbsoluteOrientationSensor' in window);
-  }
-
-  // Compass by device
   function onDeviceOrientation(event) {
     let alpha = event.alpha;
     if (typeof event.webkitCompassHeading !== "undefined") {
-      // iOS Safari
       alpha = event.webkitCompassHeading;
     } else if (event.absolute === false || alpha === null) {
-      // Не поддерживается
       return;
     }
     if (userLat !== null && userLng !== null) {
@@ -389,11 +402,83 @@
     }
   }
 
-  // Получаем геолокацию
+  document.getElementById('addrBtn').onclick = geocodeAddress;
+  addressInput.oninput = function() {
+    showSuggestions(this.value);
+  };
+  addressInput.onblur = function() { setTimeout(()=>suggestionsBox.style.display='none', 120);}
+  addressInput.onfocus = function() { if(suggestionList.length) suggestionsBox.style.display='block'; }
+
+  function geocodeAddress(useSuggestion) {
+    let addr;
+    if (typeof useSuggestion === 'object' && useSuggestion.lat !== undefined) {
+      addr = useSuggestion;
+    } else {
+      let v = addressInput.value.trim();
+      if (!v) return false;
+      addressStatus.textContent = "Поиск...";
+      fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(v))
+        .then(r=>r.json()).then(function(res){
+          if (!res || !res.length) {
+            addressStatus.textContent = "Ничего не найдено. Попробуйте другой адрес/город.";
+            return;
+          }
+          addresstoQibla(res[0]);
+        }).catch(function(){
+          addressStatus.textContent = "Ошибка сети. Попробуйте позже.";
+        });
+      return;
+    }
+    // Если пришли с click autocomplete
+    addresstoQibla(addr);
+  }
+
+  function addresstoQibla(loc) {
+    userLat = parseFloat(loc.lat);
+    userLng = parseFloat(loc.lon);
+    qibla = getQiblaAngle(userLat, userLng);
+    addressStatus.textContent = "Город/адрес: "+ (loc.display_name.split(",")[0]);
+    document.getElementById('info').innerHTML =
+      "Ваш азимут на Киблу: <b>"+qibla.toFixed(2)+"&deg;</b> <br><span style='font-size:0.97em;'>Вы можете вращать компас вручную.<br>Стрелка указывает направление на Каабу.</span>";
+    document.getElementById('sliderWrap').style.display = "";
+    showCompass(qibla);
+    suggestionsBox.style.display = 'none';
+  }
+
+  let lastInputTime = 0;
+  function showSuggestions(v) {
+    suggestionList = [];
+    if (!v.trim()) {
+      suggestionsBox.style.display = 'none';
+      return;
+    }
+    let now = Date.now();
+    lastInputTime = now;
+    setTimeout(() => {
+      if (now !== lastInputTime) return;
+      fetch("https://nominatim.openstreetmap.org/search?format=json&limit=6&q=" + encodeURIComponent(v))
+        .then(r=>r.json()).then(function(res){
+          suggestionsBox.innerHTML = "";
+          if (!res || !res.length) { suggestionsBox.style.display='none'; return;}
+          suggestionList = res;
+          for (let i = 0; i < res.length; i++) {
+            let s = document.createElement('div');
+            s.className = "suggestion";
+            s.innerText = res[i].display_name;
+            s.onclick = function(){
+              addressInput.value = res[i].display_name;
+              geocodeAddress(res[i]);
+            };
+            suggestionsBox.appendChild(s);
+          }
+          suggestionsBox.style.display = 'block';
+        });
+    }, 270);
+  }
+
   function geoFail() {
-    makeManualLocVisible();
-    // И для стационарных покажем возможность вращения стрелки вручную (ползунок)
-    sliderWrap.style.display = "";
+    document.getElementById('info').innerHTML = "Не удалось определить ваше местоположение.<br>Пожалуйста, введите свой город или адрес вручную!";
+    document.getElementById('sliderWrap').style.display = "";
   }
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos){
@@ -404,9 +489,7 @@
       showCompass(qibla);
       document.getElementById('info').innerHTML =
         "Ваш азимут на Киблу: <b>"+qibla.toFixed(2)+"&deg;</b> &nbsp;<br><span style='font-size:0.97em;'>Разместите устройство горизонтально,<br> стрелка указывает направление на Каабу.</span>";
-      // Пытаемся включить DeviceOrientation на мобильных
       if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // iOS 13+
         var activateBtn = document.createElement('button');
         activateBtn.textContent = 'Активация компаса устройства';
         activateBtn.style = 'margin-top:13px;background:#ebb500;color:#fff; border:none; border-radius:8px; font-size:1em;padding:9px 18px; cursor:pointer; box-shadow:0 2px 6px #157a5a28;';
@@ -423,8 +506,7 @@
       } else if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', onDeviceOrientation, true);
       } else {
-        // Нет device orientation - ручной ползунок только
-        sliderWrap.style.display = "";
+        document.getElementById('sliderWrap').style.display = "";
       }
     }, geoFail, {timeout:8000});
   } else {
