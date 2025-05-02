@@ -1,7 +1,7 @@
 const CACHE_NAME = 'my-cards-v1';
 const urlsToCache = [
   '/',
-  '/index.html', // Или ваш основной HTML-файл
+  '/index.html', '/menu.html' , '/nam.html' ,  '/99menu.html' , // Или ваш основной HTML-файл
   // Пропишите сюда все важные CSS/JS/картинки, которые хотите кэшировать:
   'https://static.tildacdn.info/css/tilda-grid-3.0.min.css',
   'https://static.tildacdn.info/img/tildafavicon.ico',
