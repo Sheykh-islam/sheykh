@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Quran Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family:sans-serif; background:#f8fafc; min-height:100vh; margin:0;
+      display:flex; flex-direction:column; align-items:center;
+    }
+    .container {
+      margin-top:60px;
+      padding:30px;
+      background:#fff;
+      border-radius:22px;
+      box-shadow:0 6px 24px #0002;
+      min-width:350px; max-width:420px; width:90%;
+      display:flex; flex-direction:column; align-items:center;
+    }
+    h3 { margin:0 0 30px 0; font-weight:600; font-size:1.4em; color:#333;}
+    .controls {display:flex;gap:12px;align-items:center;margin-bottom:20px;}
+    select, button {
+      font-size:1em; padding:9px 13px; border-radius:8px; border:1px solid #eee;
+      background:#f3f7fa;
+    }
+    button.download {
+      background:#22c55e; color:#fff; border:none; margin-left:10px;
+      padding: 9px 17px;
+    }
+    .sura {
+      margin-bottom:18px; font-size:1.05em;
+      display:flex;align-items:center;gap:20px;
+    }
+    .sura button { font-size:1.3em; background:none;border:none;cursor:pointer;}
+    audio {margin-top:15px;width:100%;}
+    .footer {margin-top:50px; color:#999; font-size:0.95em;}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h3>Наслаждайтесь чтением Корана</h3>
+    <div class="controls">
+      <select id="reciter"></select>
+      <button class="download" id="downloadBtn">Скачать</button>
+    </div>
+    <div class="sura">
+      <button id="prevSura" title="Назад">⏮️</button>
+      <span id="suraTitle">Сура 1</span>
+      <button id="nextSura" title="Вперед">⏭️</button>
+    </div>
+    <audio id="player" controls></audio>
+  </div>
+  <div class="footer">© 2025 Quran Player · Минимализм</div>
+
+<script>
+// Данные чтецов
+const reciters = [
+  {
+    name: "Абдул Басит Абдул Самад",
+    template: (sura) => `https://server7.mp3quran.net/basit/Almusshaf-Al-Mojawwad/${sura.padStart(3,'0')}.mp3`
+  },
+  { name: "Абдуллах аль-Матруд", template: (sura) => `https://media.quran-online.ru/recitations/abdullah-matrud/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Абубакр аль-Шатри", template: (sura) => `https://media.quran-online.ru/recitations/abu-bakr-al-shatri/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Азиз Алили", template: (sura) => `https://media.quran-online.ru/recitations/aziz-alili/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Али аль-Хузейфи", template: (sura) => `https://media.quran-online.ru/recitations/ali-abdur-rahman-al-huthaify/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Махмуд Халиль аль-Хусари", template: (sura) => `https://media.quran-online.ru/recitations/mahmoud-khaleel-al-husary/reading-muallim/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Мишари Рашид", template: (sura) => `https://media.quran-online.ru/recitations/mishari-rashid/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Мухаммад аль-Люхайдан", template: (sura) => `https://media.quran-online.ru/recitations/muhammad-al-luhaidan/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Мухаммад Сиддик аль-Миншави", template: (sura) => `https://media.quran-online.ru/recitations/muhammad-siddiq-al-minshawi/mujawwad/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Нассир аль-Катами", template: (sura) => `https://media.quran-online.ru/recitations/nasser-al-qatami/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Саад аль-Гамиди", template: (sura) => `https://media.quran-online.ru/recitations/saad-al-ghamdi/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Салах аль-Хашими", template: (sura) => `https://media.quran-online.ru/recitations/salah-al-hashim/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Салах Бухатир", template: (sura) => `https://media.quran-online.ru/recitations/salah-bukhatir/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Сауд аш-Шурейм", template: (sura) => `https://media.quran-online.ru/recitations/saood-bin-ibraaheem-ash-shuraym/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Тауфик ибн Санд ас-Сауаих", template: (sura) => `https://media.quran-online.ru/recitations/tawfeeq-ibn-said-as-sawaigh/by-sura/${sura.padStart(3,'0')}.mp3` },
+  { name: "Ясир ад даусари", template: (sura) => `https://media.quran-online.ru/recitations/yasser-ad-dussary/by-sura/${sura.padStart(3,'0')}.mp3` }
+];
+const TOTAL_SURAS = 114;
+
+let currentReciter = 0;
+let currentSura = 1;
+
+const reciterSelect = document.getElementById('reciter');
+const suraTitle = document.getElementById('suraTitle');
+const player = document.getElementById('player');
+const prevBtn = document.getElementById('prevSura');
+const nextBtn = document.getElementById('nextSura');
+const downloadBtn = document.getElementById('downloadBtn');
+
+// инициализация селектора чтецов
+reciters.forEach((r,i)=>{
+  let opt = document.createElement('option');
+  opt.textContent = r.name;
+  opt.value = i;
+  reciterSelect.appendChild(opt);
+});
+
+// функция получения ссылки на mp3
+function getAudioLink(reciterIdx, suraNum) {
+  return reciters[reciterIdx].template(String(suraNum).padStart(3,'0'));
+}
+
+// обновить плеер
+function updatePlayer() {
+  suraTitle.textContent = `Сура № ${currentSura}`;
+  const link = getAudioLink(currentReciter, currentSura);
+  player.src = link;
+}
+
+// слушатели
+reciterSelect.onchange = e => {
+  currentReciter = +e.target.value;
+  updatePlayer();
+  player.play();
+};
+prevBtn.onclick = ()=> {
+  currentSura = currentSura>1 ? currentSura-1 : TOTAL_SURAS;
+  updatePlayer(); player.play();
+};
+nextBtn.onclick = ()=> {
+  currentSura = currentSura<TOTAL_SURAS ? currentSura+1 : 1;
+  updatePlayer(); player.play();
+};
+
+downloadBtn.onclick = ()=> {
+  const link = getAudioLink(currentReciter, currentSura);
+  const a = document.createElement('a');
+  a.href = link;
+  a.download = `sura${currentSura}.mp3`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+updatePlayer();
+
+// =================== Сервис-воркер для кеша ====================
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=> {
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
+</script>
+</body>
+</html>
