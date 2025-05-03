@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Sheykh GPT</title>
+  <title>Quran Player</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="manifest" href="manifest.json">
   <style>
@@ -11,60 +11,82 @@
       display:flex; flex-direction:column; align-items:center;
     }
     .container {
-      margin-top:40px; margin-bottom:30px;
-      padding:28px 12px 20px 12px;
+      margin-top:40px;
+      padding:24px 7px 17px 7px;
       background:#fff;
       border-radius:23px;
       box-shadow:0 4px 22px #0001;
-      min-width:275px; max-width:395px; width:98vw;
+      min-width:240px; max-width:395px; width:98vw;
       display:flex; flex-direction:column; align-items:center;
     }
-    h3 { margin:0 0 24px 0; font-weight:700; font-size:1.13em; color:#2d2f31;}
-    .controls {display:flex; gap:10px; align-items:center; margin-bottom:21px; width:100%;}
+    h3 { margin:0 0 21px 0; font-weight:700; font-size:1.09em; color:#2d2f31;}
+    .controls {display:flex; gap:9px; align-items:center; margin-bottom:16px; width:100%;}
     select, button {
-      font-size:0.98em; padding:8px 12px; border-radius:8px; border: 1px solid #e6e9f1;
+      font-size:1em; padding:7px 12px; border-radius:8px; border: 1px solid #e6e9f1;
       background:#f3f7fa;
     }
     button.download {
       background:linear-gradient(90deg,#22c55e 80%,#7beeab 100%);
-      color:#fff; border:none; margin-left:10px;
-      padding:8px 17px; font-weight:500;
-      box-shadow:0 2px 9px #0002;
+      color:#fff; border:none; margin-left:9px;
+      padding:8.5px 14px; font-weight:500;
+      box-shadow:0 2px 9px #0001;
       cursor:pointer;
       border-radius:9px;
+      font-size:1.05em;
     }
     .row {
-      margin-bottom:17px; width:100%; display:flex; flex-direction:row; gap:8px;
+      margin-bottom:13px; width:100%; display:flex; flex-direction:row; gap:8px;
       align-items:center; justify-content:space-between;
     }
     .nav-btn {
       border:none; background:#edf7ee;
-      color:#22c55e; font-size:1.5em; border-radius:50%;
-      width:42px; height:42px; cursor:pointer;
+      color:#22c55e; font-size:1.35em; border-radius:50%;
+      width:38px; height:38px; cursor:pointer;
       box-shadow:0px 2px 10px #0001;
       display:flex; align-items:center; justify-content:center;
       transition:background 0.14s;
     }
     .nav-btn:active {background:#c9f9e1;}
     .sura-title {
-      font-size:1.15em; font-weight:600; color:#162e1e;
+      font-size:1.09em; font-weight:600; color:#162e1e;
       margin: 0 6px 0 6px; flex:1; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
     select#suraSelect {
-      width:98%; border-radius:9px; font-size:1em;
-      margin-top:8px; margin-bottom:4px;
-      background:#f6fafb; border:1px solid #e0e6f1;
-      padding:10px 13px;
+      width:98%; border-radius:8px; font-size:1em;
+      margin-top:6px; background:#f6fafb;
+      border:1px solid #e0e6f1;
+      padding:8px 9px;
     }
-    audio {
-      width:100%; margin-top:13px; background:transparent;
+    /* Кастомный аудио-плеер */
+    .custom-audio-controls {
+      width:100%; display:flex; align-items:center;
+      gap:9px; justify-content:center; margin-top:14px;
+      user-select: none;
     }
-    .footer {margin-top:46px;color:#9a9aa0;font-size:1em;text-align:center;}
+    .custom-audio-controls button {
+      border:none;
+      background:#ebf6ef; color:#16a34a;
+      font-size:1.17em; border-radius:50%;
+      width:32px; height:32px; cursor:pointer;
+      transition:background .12s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .custom-audio-controls button:active { background:#b5efd6; }
+    .custom-audio-controls input[type=range] {
+      flex:1 1 auto; margin: 0 5px;
+      accent-color: #22c55e; height:3px;
+      border-radius:4px;
+    }
+    .custom-audio-controls span {
+      font-size:0.93em; width:33px; text-align:right; color:#233;
+      user-select: none;
+    }
+    .footer {margin-top:42px;color:#9a9aa0;font-size:1em;text-align:center;}
     @media (max-width:480px){
-      .container {padding:21px 4px 17px 4px;min-width:unset;}
-      .row, .controls { gap: 4vw;}
-      .nav-btn {width:39px;height:39px;font-size:1.2em;}
-      .sura-title { font-size:0.99em;}
+      .container {padding:15px 2px 14px 2px;}
+      .sura-title { font-size:0.98em;}
+      .custom-audio-controls span {font-size: 0.90em; width:28px;}
+      .custom-audio-controls button {width:27px;height:27px;font-size:1em;}
     }
   </style>
 </head>
@@ -74,7 +96,7 @@
   <h3>Наслаждайтесь чтением Корана</h3>
   <div class="controls">
     <select id="reciter"></select>
-    <button class="download" id="downloadBtn" title="Скачать суру">⬇</button>
+    <button class="download" id="downloadBtn" title="Скачать суру">⬇️</button>
   </div>
 
   <div class="row">
@@ -83,12 +105,23 @@
     <button class="nav-btn" id="nextSura" title="Следующая сура">&#8680;</button>
   </div>
   <select id="suraSelect"></select>
-  <audio id="player" controls preload="none"></audio>
+
+  <!-- Спрятанный аудиотег -->
+  <audio id="player" preload="none" style="display:none"></audio>
+  <!-- Наш кастомный аудиоплеер -->
+  <div class="custom-audio-controls" id="customControls">
+    <button id="rewindBtn" title="10 сек назад">⏪</button>
+    <button id="playPauseBtn" title="Пуск/Пауза">▶️</button>
+    <button id="forwardBtn" title="10 сек вперед">⏩</button>
+    <span id="currentTime">0:00</span>
+    <input type="range" id="progress" min="0" value="0" step="0.1">
+    <span id="duration">0:00</span>
+  </div>
 </div>
-<div class="footer">© 2025 Quran Player · Sheykh GPT</div>
+<div class="footer">© 2025 Quran Player · Минимализм</div>
 
 <script>
-//============== НАЗВАНИЯ СУР ===============
+//============== ДАННЫЕ ===============
 const suras = [
 "Аль-Фатиха","Аль-Бакара","Аль-Имран","Ан-Ниса","Аль-Маида","Аль-Ан'ам","Аль-А'раф","Аль-Анфаль","Ат-Тауба","Юнус",
 "Худ","Юсуф","Ар-Ра’д","Ибрахим","Аль-Хиджр","Ан-Нахль","Аль-Исра","Аль-Кахф","Марьям","Та-Ха",
@@ -104,8 +137,6 @@ const suras = [
 "Аль-Массад","Аль-Ихляс","Аль-Фаляк","Ан-Нас"
 ];
 const TOTAL_SURAS = suras.length;
-
-//============== ЧТЕЦЫ ==============
 const reciters = [
   {
     name: "Абдул Басит Абдул Самад",
@@ -127,21 +158,18 @@ const reciters = [
   { name: "Тауфик ибн Санд ас-Сауаих", template: (s)=>`https://media.quran-online.ru/recitations/tawfeeq-ibn-said-as-sawaigh/by-sura/${s.padStart(3,'0')}.mp3` },
   { name: "Ясир ад даусари", template: (s)=>`https://media.quran-online.ru/recitations/yasser-ad-dussary/by-sura/${s.padStart(3,'0')}.mp3` }
 ];
-// По умолчанию: Нассир аль-Катами (index = 9)
 const DEFAULT_RECITER = 9;
 
 let currentReciter = +localStorage.getItem("reciter") || DEFAULT_RECITER;
 let currentSura    = 1;
-
 const reciterSelect = document.getElementById('reciter');
 const suraSelect    = document.getElementById('suraSelect');
 const suraTitle     = document.getElementById('suraTitle');
-const player        = document.getElementById('player');
 const prevBtn       = document.getElementById('prevSura');
 const nextBtn       = document.getElementById('nextSura');
 const downloadBtn   = document.getElementById('downloadBtn');
 
-// == Заполнение списка чтецов
+// == Чтецы
 reciters.forEach((r,i)=>{
   let opt = document.createElement('option');
   opt.textContent = r.name;
@@ -150,7 +178,7 @@ reciters.forEach((r,i)=>{
 });
 reciterSelect.selectedIndex = currentReciter;
 
-// == Заполнение списка сур (с названиями)
+// == Суры
 suraSelect.innerHTML = '';
 for(let i=0; i<TOTAL_SURAS; ++i){
   let opt = document.createElement('option');
@@ -159,41 +187,35 @@ for(let i=0; i<TOTAL_SURAS; ++i){
   suraSelect.appendChild(opt);
 }
 
-// == Получить ссылку на аудио
+// == Audio player logic
 function getAudioLink(reciterIdx, suraNum){
   return reciters[reciterIdx].template(String(suraNum).padStart(3,'0'));
 }
-
-// == Обновить плеер и подписи
 function updatePlayer() {
   suraSelect.selectedIndex = currentSura-1;
   suraTitle.textContent = (currentSura) + ". " + suras[currentSura-1];
   const link = getAudioLink(currentReciter,currentSura);
   player.src = link;
-  // автоскролл к плееру только на телефоне
-  if(window.innerWidth<600 && 'scrollIntoView' in player){
-    setTimeout(()=>player.scrollIntoView({behavior:"smooth",block:"center"}),120);
-  }
 }
 
 reciterSelect.onchange = e => {
   currentReciter = +e.target.value;
   localStorage.setItem("reciter", currentReciter);
   updatePlayer();
-  player.play();
+  customPause();
 };
 suraSelect.onchange = e => {
   currentSura = +e.target.value;
   updatePlayer();
-  player.play();
+  customPause();
 };
 prevBtn.onclick=()=>{
   currentSura = currentSura>1 ? currentSura-1 : TOTAL_SURAS;
-  updatePlayer(); player.play();
+  updatePlayer(); customPause();
 };
 nextBtn.onclick=()=>{
   currentSura = currentSura<TOTAL_SURAS ? currentSura+1 : 1;
-  updatePlayer(); player.play();
+  updatePlayer(); customPause();
 };
 downloadBtn.onclick = ()=>{
   const link = getAudioLink(currentReciter, currentSura);
@@ -207,15 +229,55 @@ downloadBtn.onclick = ()=>{
 suraSelect.selectedIndex = currentSura-1;
 updatePlayer();
 
-// ============= Service Worker для кеша (как прежде) ============
+// Кастомный плеер
+const player = document.getElementById('player');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const rewindBtn = document.getElementById('rewindBtn');
+const forwardBtn = document.getElementById('forwardBtn');
+const progress = document.getElementById('progress');
+const currentTimeElem = document.getElementById('currentTime');
+const durationElem = document.getElementById('duration');
+
+playPauseBtn.onclick = ()=>{
+  if (player.paused) player.play();
+  else player.pause();
+};
+player.onplay = ()=>{ playPauseBtn.innerText = "⏸️"; };
+player.onpause = ()=>{ playPauseBtn.innerText = "▶️"; };
+
+// -10/+10
+rewindBtn.onclick = ()=>{ player.currentTime = Math.max(player.currentTime-10,0);}
+forwardBtn.onclick = ()=>{ player.currentTime = Math.min(player.currentTime+10, player.duration||0);}
+player.ontimeupdate = ()=>{
+  progress.value = player.currentTime;
+  currentTimeElem.textContent = formatTime(player.currentTime);
+};
+player.onloadedmetadata = ()=>{
+  progress.max = player.duration||0;
+  durationElem.textContent = formatTime(player.duration);
+};
+progress.oninput = ()=>{ player.currentTime = parseFloat(progress.value);}
+function formatTime(sec){
+  sec=Math.floor(sec)||0;let m=Math.floor(sec/60),s=sec%60;
+  return m+':'+(s<10?'0':'')+s;
+}
+// сброс play при смене суры
+function customPause() {
+    player.pause();
+    player.currentTime = 0;
+    progress.value = 0;
+    playPauseBtn.innerText = '▶️';
+    currentTimeElem.textContent = "0:00";
+    durationElem.textContent = "0:00";
+}
+customPause();
+
+// ============= Service Worker для кеша ============
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=> {
     navigator.serviceWorker.register('./sw.js');
   });
 }
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
