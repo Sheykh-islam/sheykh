@@ -182,132 +182,172 @@
         <div class="namaz-table" id="namazTimes"></div>
     </div>
     <script>
-    const namazNames = [
-        ['Фаджр','فجر'],
-        ['Восход','شروق'],
-        ['Зухр','ظهر'],
-        ['Аср','عصر'],
-        ['Магриб','مغرب'],
-        ['Иша','عشاء']
-    ];
-    function renderNamaz(prayerTimes) {
-        let html = "";
-        const nowParts = currentTime().split(':');
-        const nowMinutes = Number(nowParts[0]) * 60 + Number(nowParts[1]);
-        let highlightIndex = -1;
-        let times = [
-            prayerTimes.Fajr,
-            prayerTimes.Sunrise,
-            prayerTimes.Dhuhr,
-            prayerTimes.Asr,
-            prayerTimes.Maghrib,
-            prayerTimes.Isha
-        ].map(t=>t.slice(0,5));
-        for (let i = 0; i < times.length; i++) {
-            const parts = times[i].split(':');
-            const min = Number(parts[0]) * 60 + Number(parts[1]);
-            if (nowMinutes >= min) highlightIndex = i;
-        }
-        if (nowMinutes > timeToMins(times[times.length-1])) highlightIndex = -1;
-        for(let i=0;i<6;i++){
-            html += `<div class="namaz-row${highlightIndex===i?' current':''}">
-                <span class="namaz-title">${namazNames[i][0]}
-                  <span style="font-size:0.78em; color:#21785a;">(${namazNames[i][1]})</span>
-                </span>
-                <span class="namaz-time">${times[i]}</span>
-            </div>`;
-        }
-        document.getElementById('namazTimes').innerHTML = html;
-    }
-    function timeToMins(str){
-        const p=str.split(':'); return Number(p[0])*60+Number(p[1]);
-    }
-    function currentTime() {
-        const now = new Date();
-        return ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
-    }
-    function updateClock() {
-        document.getElementById('now').textContent = currentTime();
-        if(window._lastPrayerTimes) renderNamaz(window._lastPrayerTimes);
-    }
-    setInterval(updateClock, 60000); updateClock();
+const namazNames = [
+    ['Фаджр','فجر'],
+    ['Восход','شروق'],
+    ['Зухр','ظهر'],
+    ['Аср','عصر'],
+    ['Магриб','مغرب'],
+    ['Иша','عشاء']
+];
 
-    function showMsg(msg) {
-        document.getElementById('msg').textContent = msg || '';
+// По умолчанию — Москва
+window._currentTimezone = "Europe/Moscow";
+
+function renderNamaz(prayerTimes) {
+    let html = "";
+    const nowParts = currentTime().split(':');
+    const nowMinutes = Number(nowParts[0]) * 60 + Number(nowParts[1]);
+    let highlightIndex = -1;
+    let times = [
+        prayerTimes.Fajr,
+        prayerTimes.Sunrise,
+        prayerTimes.Dhuhr,
+        prayerTimes.Asr,
+        prayerTimes.Maghrib,
+        prayerTimes.Isha
+    ].map(t=>t.slice(0,5));
+    for (let i = 0; i < times.length; i++) {
+        const parts = times[i].split(':');
+        const min = Number(parts[0]) * 60 + Number(parts[1]);
+        if (nowMinutes >= min) highlightIndex = i;
     }
-    // -- Поиск по названию города на любом языке / любом населенном пункте РФ:
-    async function getCoordsByName(city) {
-      const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(city + ', Россия');
-      const response = await fetch(url, {headers: { 'Accept-Language': 'ru' }});
-      const data = await response.json();
-      if (data.length) {
-        return {
-          lat: data[0].lat,
-          lon: data[0].lon,
-          displayName: data[0].display_name
-        };
-      } else {
-        throw new Error("Город не найден.");
-      }
+    if (nowMinutes > timeToMins(times[times.length-1])) highlightIndex = -1;
+    for(let i=0;i<6;i++){
+        html += `<div class="namaz-row${highlightIndex===i?' current':''}">
+            <span class="namaz-title">${namazNames[i][0]}
+              <span style="font-size:0.78em; color:#21785a;">(${namazNames[i][1]})</span>
+            </span>
+            <span class="namaz-time">${times[i]}</span>
+        </div>`;
     }
-    async function fetchNamazByCoords(lat, lon, cityName) {
-      showMsg('Получаем расписание...');
-      const apiUrl =
-        `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=14`;
-      const r = await fetch(apiUrl); const d = await r.json();
-      if (d.code !== 200) throw new Error();
-      window._lastPrayerTimes = d.data.timings;
-      renderNamaz(window._lastPrayerTimes);
-      document.getElementById('currentCity').textContent =
-        cityName || (lat+', '+lon);
-      showMsg('');
+    document.getElementById('namazTimes').innerHTML = html;
+}
+function timeToMins(str){
+    const p=str.split(':'); return Number(p[0])*60+Number(p[1]);
+}
+
+function currentTime() {
+    const now = new Date();
+    if (window._currentTimezone) {
+        return new Intl.DateTimeFormat("en-GB", {
+            hour: "2-digit", minute: "2-digit", hour12: false,
+            timeZone: window._currentTimezone
+        }).format(now);
     }
-    async function fetchByCity() {
+    return ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+}
+
+function updateClock() {
+    document.getElementById('now').textContent = currentTime();
+    if(window._lastPrayerTimes) renderNamaz(window._lastPrayerTimes);
+}
+setInterval(updateClock, 60000); updateClock();
+
+function showMsg(msg) {
+    document.getElementById('msg').textContent = msg || '';
+}
+
+// Получить координаты по названию города
+async function getCoordsByName(city) {
+  const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(city);
+  const response = await fetch(url, {headers: { 'Accept-Language': 'ru' }});
+  const data = await response.json();
+  if (data.length) {
+    return {
+      lat: data[0].lat,
+      lon: data[0].lon,
+      displayName: data[0].display_name
+    };
+  } else {
+    throw new Error("Город не найден.");
+  }
+}
+
+// Получить таймзону по координатам
+async function getTimezoneByCoords(lat, lon) {
+  const url = `https://api.open-meteo.com/v1/timezone?latitude=${lat}&longitude=${lon}`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  return data.timezone;
+}
+
+// Получить и показать расписание АЗАНА по координатам и таймзоне
+async function fetchNamazByCoords(lat, lon, cityName) {
+  showMsg('Получаем расписание...');
+  const timezone = await getTimezoneByCoords(lat, lon);
+  window._currentTimezone = timezone; // Устанавливаем нужную таймзону
+  const apiUrl =
+    `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=14&timezone=${encodeURIComponent(timezone)}`;
+  const r = await fetch(apiUrl); 
+  const d = await r.json();
+  if (d.code !== 200) throw new Error();
+  window._lastPrayerTimes = d.data.timings;
+  renderNamaz(window._lastPrayerTimes);
+  document.getElementById('currentCity').textContent =
+    cityName || (lat+', '+lon);
+  showMsg('');
+}
+
+// Поиск по названию города
+async function fetchByCity() {
   let cityStr = document.getElementById('cityInput').value.trim();
-  if (!cityStr) {showMsg('Введите город или деревню на русском!'); return;}
+  if (!cityStr) {showMsg('Введите город или деревню!'); return;}
   showMsg('Ищем '+cityStr+'...');
   try {
     const coords = await getCoordsByName(cityStr);
     await fetchNamazByCoords(coords.lat, coords.lon, coords.displayName);
-    // Сохраняем выбранный город в localStorage!
     localStorage.setItem('savedCity', cityStr);
+    localStorage.removeItem('geoCoords');
   } catch(e) {
     showMsg('Город не найден или не удалось получить координаты!');
   }
 }
-    // -- Определить по геолокации:
-    function fetchByGeo() {
-      showMsg('Определяем вашу геолокацию...');
-      if (!navigator.geolocation) {
-          showMsg('Ваш браузер не поддерживает геолокацию.');
-          return;
-      }
-      navigator.geolocation.getCurrentPosition(async function(pos){
+
+// Поиск по текущей геолокации пользователя
+function fetchByGeo() {
+  showMsg('Определяем вашу геолокацию...');
+  if (!navigator.geolocation) {
+      showMsg('Ваш браузер не поддерживает геолокацию.');
+      return;
+  }
+  navigator.geolocation.getCurrentPosition(async function(pos){
+      try {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          let cityName = '';
           try {
-              const lat = pos.coords.latitude;
-              const lon = pos.coords.longitude;
-              // Получаем красивое имя места
-              let cityName = '';
-              try {
-                  const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
-                  const data = await r.json();
-                  cityName = data.display_name || '';
-              } catch(e){ cityName = ''; }
-              await fetchNamazByCoords(lat, lon, cityName);
-          } catch(e){
-              showMsg('Не удалось найти расписание!');
-          }
-      }, function(){ showMsg('Не удалось определить геолокацию.'); });
-    }
+              const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+              const data = await r.json();
+              cityName = data.display_name || '';
+          } catch(e){ cityName = ''; }
+          await fetchNamazByCoords(lat, lon, cityName);
+          localStorage.setItem('geoCoords', JSON.stringify({lat, lon, cityName}));
+          localStorage.removeItem('savedCity');
+      } catch(e){
+          showMsg('Не удалось найти расписание!');
+      }
+  }, function(){ showMsg('Не удалось определить геолокацию.'); });
+}
+
+// При загрузке страницы
 (async function(){
+  let geo = localStorage.getItem('geoCoords');
+  if (geo) {
+    try {
+      geo = JSON.parse(geo);
+      await fetchNamazByCoords(geo.lat, geo.lon, geo.cityName);
+      document.getElementById('cityInput').value = geo.cityName || '';
+      return;
+    } catch(e){}
+  }
   let defaultCity = localStorage.getItem('savedCity') || 'Москва';
   try {
     const coords = await getCoordsByName(defaultCity);
     await fetchNamazByCoords(coords.lat, coords.lon, coords.displayName);
-    // Подставить еще и в input:
     document.getElementById('cityInput').value = defaultCity;
   } catch{}
 })();
-    </script>
+</script>
 </body>
 </html>
