@@ -31,3 +31,23 @@ self.addEventListener('fetch', function(event) {
       })
   );
 });
+const CACHE_NAME = "quran-player-v1";
+self.addEventListener('install', event => {
+  self.skipWaiting();
+});
+self.addEventListener('fetch', event => {
+  // Кешируем только аудио и "основные" страницы
+  if (event.request.url.endsWith(".mp3") || event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache =>
+        cache.match(event.request).then(resp =>
+          resp ||
+          fetch(event.request).then(response => {
+            cache.put(event.request, response.clone());
+            return response;
+          }).catch(()=>resp)
+        )
+      )
+    );
+  }
+});
