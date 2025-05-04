@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <title>Quran Player</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script src="https://kit.fontawesome.com/7c33dff1d8.js" crossorigin="anonymous"></script>
   <style>
     :root{
-      --small: 35px;
-      --medium: 50px;
       --large: 65px;
       --bar-height:10px;
     }
@@ -36,14 +33,14 @@
       background:#f3f7fa; min-width:110px; font-size:1em;
     }
     .player{
-      border-radius:20px; width:100%; max-width: 440px; 
+      border-radius:20px; width:100%; max-width: 440px;
       height:290px;
       box-shadow:6px 6px 15px rgba(51,51,51,0.15);
       overflow:hidden; background:#f9f7fa; margin-top:28px; position:relative;
       display:flex; flex-direction:column; align-items:center; justify-content:center;
     }
     .player .title{
-      font-size:23px; margin-bottom:7px; 
+      font-size:23px; margin-bottom:7px;
       font-weight:600; color:#58157f;
       text-align:center; margin-top:10px;
     }
@@ -74,16 +71,19 @@
       margin-top:6px;
     }
     .button{
-      border: 1px solid #ddd; border-radius:50%;
-      text-align:center; color:#333;
-      background:#fff; box-shadow:0px 4px 10px #eee1;
-      font-size:27px;
-      width: var(--large); height: var(--large); line-height: var(--large);
+      border: none; border-radius:50%;
+      text-align:center; background:#fff;
+      box-shadow:0px 4px 10px #eee1;
+      width: var(--large); height: var(--large);
       cursor:pointer; transition:.15s;
       display:flex; align-items:center; justify-content:center;
+      padding:0;
     }
-    .button:hover{ background:#883ae7; color:#fff;}
-    /* текущее время и длительность */
+    .button img {
+      width:36px; height:36px; user-select:none; pointer-events:none;
+      object-fit:contain; background:transparent;
+    }
+    .button:active  { background: #eedcff; }
     .player .meta-time {
       width:82%;
       display:flex; flex-direction:row; justify-content:space-between;
@@ -93,7 +93,7 @@
       .container{ max-width:96vw;}
       .player{min-width:unset;}
       h3 { font-size:0.98em;}
-      .button{font-size:22px;}
+      .button img{width:28px !important; height:28px !important;}
     }
   </style>
 </head>
@@ -113,9 +113,15 @@
     </div>
     <div class="meta-time"><span id="ctime">0:00</span><span id="dur">0:00</span></div>
     <div class="buttons">
-      <div class="button" id="prevSuraBtn" title="Предыдущая сура"><i class="fas fa-step-backward"></i></div>
-      <div class="button" id="play"><i class="fas fa-play"></i></div>
-      <div class="button" id="nextSuraBtn" title="Следующая сура"><i class="fas fa-step-forward"></i></div>
+      <button class="button" id="prevSuraBtn" title="Предыдущая сура">
+        <img src="https://cdn0.iconfinder.com/data/icons/typicons-2/24/media-rewind-1024.png" alt="Назад" id="imgPrevSura">
+      </button>
+      <button class="button" id="play" title="Воспроизвести">
+        <img src="https://cdn2.iconfinder.com/data/icons/complete-common-version-2-8/1024/play6-1024.png" alt="Play" id="imgPlayPause">
+      </button>
+      <button class="button" id="nextSuraBtn" title="Следующая сура">
+        <img src="https://banner2.cleanpng.com/20180403/gtw/kisspng-computer-icons-button-encapsulated-postscript-clip-get-instant-access-button-5ac311b2b75182.6874984715227334907509.jpg" alt="Вперед" id="imgNextSura">
+      </button>
     </div>
   </div>
 </div>
@@ -158,14 +164,18 @@ const suraSel = document.getElementById("sura");
 const ptitle = document.getElementById("ptitle");
 const sname = document.getElementById("sura_name");
 const audio = document.getElementById("audio");
+
 const playBtn = document.getElementById("play");
+const prevSuraBtn = document.getElementById("prevSuraBtn");
+const nextSuraBtn = document.getElementById("nextSuraBtn");
+
+const imgPlayPause = document.getElementById("imgPlayPause");
+const imgPrevSura = document.getElementById("imgPrevSura");
+const imgNextSura = document.getElementById("imgNextSura");
 const bar = document.getElementById("bar");
 const currentTimeBar = document.getElementById("current-time");
 const ctime = document.getElementById("ctime");
 const dur = document.getElementById("dur");
-
-const prevSuraBtn = document.getElementById("prevSuraBtn");
-const nextSuraBtn = document.getElementById("nextSuraBtn");
 
 let currentReciter = +localStorage.getItem("reciter") || 9;
 let currentSura = 1;
@@ -190,9 +200,8 @@ function pad(n){ return String(n).padStart(3,"0"); }
 function updatePlayer(loadAudio=true){
   ptitle.textContent = reciters[currentReciter].name;
   sname.textContent  = (currentSura)+". "+suras[currentSura-1];
-  // Формируем ссылку
   audio.src = reciters[currentReciter].template(pad(currentSura));
-  if(loadAudio) { audio.pause(); audio.currentTime=0; playBtn.innerHTML='<i class="fas fa-play"></i>'; }
+  if(loadAudio) { audio.pause(); audio.currentTime=0; setPlayIcon(); }
   dur.textContent = "0:00";
   ctime.textContent = "0:00";
   currentTimeBar.style.width = "0";
@@ -209,20 +218,29 @@ suraSel.onchange = e=>{
 };
 updatePlayer();
 
+function setPlayIcon(){
+  imgPlayPause.src = "https://cdn2.iconfinder.com/data/icons/complete-common-version-2-8/1024/play6-1024.png";
+  imgPlayPause.alt = "Play";
+}
+function setPauseIcon(){
+  imgPlayPause.src = "https://www.clipartmax.com/png/full/231-2319850_stop-comments-hate-valentines-day.png";
+  imgPlayPause.alt = "Pause";
+}
+
 playBtn.addEventListener("click", ()=>{
   if(audio.paused){
     audio.play();
-    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    setPauseIcon();
   } else {
     audio.pause();
-    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    setPlayIcon();
   }
 });
-audio.addEventListener("play", ()=> playBtn.innerHTML='<i class="fas fa-pause"></i>');
-audio.addEventListener("pause",()=> playBtn.innerHTML='<i class="fas fa-play"></i>');
+audio.addEventListener("play", setPauseIcon);
+audio.addEventListener("pause",setPlayIcon);
 audio.addEventListener("ended",()=> {
   audio.currentTime = 0;
-  playBtn.innerHTML='<i class="fas fa-play"></i>';
+  setPlayIcon();
 });
 
 // Кнопки вперед/назад
