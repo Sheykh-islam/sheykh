@@ -93,6 +93,7 @@
       .container{ max-width:96vw;}
       .player{min-width:unset;}
       h3 { font-size:0.98em;}
+      .button{font-size:22px;}
     }
   </style>
 </head>
@@ -106,20 +107,19 @@
   <div class="player" id="qplayer">
     <div class="title" id="ptitle"></div>
     <div class="info" id="sura_name"></div>
-
     <div class="timestamp">
       <div id="bar"></div>
       <div id="current-time"></div>
     </div>
     <div class="meta-time"><span id="ctime">0:00</span><span id="dur">0:00</span></div>
     <div class="buttons">
+      <div class="button" id="prevSuraBtn" title="Предыдущая сура"><i class="fas fa-step-backward"></i></div>
       <div class="button" id="play"><i class="fas fa-play"></i></div>
+      <div class="button" id="nextSuraBtn" title="Следующая сура"><i class="fas fa-step-forward"></i></div>
     </div>
   </div>
 </div>
-
 <audio id="audio"></audio>
-
 <script>
 //==== Списки =====
 const suras = [
@@ -164,8 +164,12 @@ const currentTimeBar = document.getElementById("current-time");
 const ctime = document.getElementById("ctime");
 const dur = document.getElementById("dur");
 
+const prevSuraBtn = document.getElementById("prevSuraBtn");
+const nextSuraBtn = document.getElementById("nextSuraBtn");
+
 let currentReciter = +localStorage.getItem("reciter") || 9;
 let currentSura = 1;
+const TOTAL_SURAS = suras.length;
 
 reciters.forEach((r,i)=>{
   let opt = document.createElement("option");
@@ -192,6 +196,7 @@ function updatePlayer(loadAudio=true){
   dur.textContent = "0:00";
   ctime.textContent = "0:00";
   currentTimeBar.style.width = "0";
+  suraSel.selectedIndex = currentSura-1;
 }
 reciterSel.onchange = e=>{
   currentReciter = +e.target.value;
@@ -204,7 +209,6 @@ suraSel.onchange = e=>{
 };
 updatePlayer();
 
-// === Кнопка Play/Pause ===
 playBtn.addEventListener("click", ()=>{
   if(audio.paused){
     audio.play();
@@ -221,7 +225,19 @@ audio.addEventListener("ended",()=> {
   playBtn.innerHTML='<i class="fas fa-play"></i>';
 });
 
-// === Прогресс-бар ===
+// Кнопки вперед/назад
+prevSuraBtn.addEventListener("click",()=>{
+  currentSura = (currentSura>1) ? (currentSura-1) : TOTAL_SURAS;
+  updatePlayer();
+  audio.play();
+});
+nextSuraBtn.addEventListener("click",()=>{
+  currentSura = (currentSura<TOTAL_SURAS) ? (currentSura+1) : 1;
+  updatePlayer();
+  audio.play();
+});
+
+// === Прогресс-бар, время
 function formatTime(t){
   let s = Math.round(t);
   return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2);
