@@ -308,6 +308,15 @@ let messages = [{
 давать ссылки на хадисы: ссылка должна выглядеть так - https://amrayn-com.translate.goog/ , после этого мы добавляем откуда взяли хадис : bukhari ; abudawood ; muslim ; malik ; nasai (Имам ахмад) ; tirmidhi ; ibnmajah ; riyadussaliheen (яхья ан навави) ; qudsi , после этого добавляем номер хадиса через : и затем вставляем это ?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true. Например : https://amrayn-com.translate.goog/bukhari:2030?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true - тут мы дали ссылку на сахих бухари 2030 хадис. И по такому принципу сделать ссылки на все хадисы.
 Важно давай ссылки только на те сборники которые я тебе написал , на остальные не давай ссылки и не приводи с них примеры.`
 }];
+if (localStorage.getItem('botChatHistory')) {
+  const saved = JSON.parse(localStorage.getItem('botChatHistory'));
+  if(saved && saved.length) messages = saved;
+}
+function saveMessages() {
+  try {
+    localStorage.setItem('botChatHistory', JSON.stringify(messages));
+  } catch(e){}
+}
 function formatResponse(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>\$1</strong>')
