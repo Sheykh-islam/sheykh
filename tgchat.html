@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Шейх GPT</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-color: #1b7fb6;
+  --bot-bg: #e9ecef;
+  --user-bg: #daf3e7;
+  --chat-bg: #f8fafd;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  font-family:'Poppins', Arial, sans-serif;
+  width:100vw; min-height:100dvh;
+  background:var(--chat-bg);
+  font-size:16px;
+  color:#23272f;
+  overflow-x:hidden;
+}
+body{
+  width:100vw; min-height:100dvh;
+}
+.main-chat-wrapper{
+  width:100vw; max-width:900px; 
+  margin:0 auto; height:100dvh; 
+  display:flex; flex-direction:column;
+  background:var(--chat-bg);
+  position:relative;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.chat-header {
+  font-size:1.13em; 
+  font-weight: 600;
+  padding: 1.1rem 1.2rem .6rem 1.2rem;
+  background: #fff;
+  position: sticky;
+  top: 0; left: 0;
+  z-index: 2;
+  box-shadow: 0 1px 8px #dde3ef50;
+}
+.chat-history {
+  flex:1 1 0%;  min-height:0;
+  overflow-y:auto;
+  padding: 1.1rem 6vw 1.1rem 6vw;
+  display: flex; flex-direction: column; gap: 1.15rem;
+  scroll-behavior: smooth;
+}
+.msg {
+  display:inline-block;
+  padding: 0.85em 1.13em;
+  max-width: 89vw;
+  min-width: 44px;
+  border-radius: 1.5em 1.5em 1.5em 0.45em;
+  font-size:1em;
+  box-shadow:0 1px 6px #dde3ef3a;
+  line-height: 1.6;
+  word-break:break-word;
+  animation:fadeIn 0.21s ease;
+  position: relative;
+  transition: background 0.14s;
+}
+.bot {
+  align-self: flex-start;
+  background: var(--bot-bg);
+  border-radius: 1.3em 1.5em 1.5em 0.7em;
+}
+.user {
+  align-self: flex-end;
+  background: var(--user-bg);
+  color: var(--primary-color);
+  border-radius:1.5em 1.3em 0.8em 1.5em;
+  margin-right: 2px;
+}
+/* Telegram typing dots animation */
+@keyframes tg-typing-dot {
+  0%   { opacity: 0.4; transform: scale(1);}
+  20%  { opacity: 1;   transform: scale(1.12);}
+  40%  { opacity: 0.4; transform: scale(1);}
+  100% { opacity: 0.4; transform: scale(1);}
+}
+.tg-typing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: var(--bot-bg);
+  color: #7a8899;
+  padding: 0.65em 1.2em;
+  border-radius: 1.3em 1.5em 1.5em 0.7em;
+  margin-left: 0;
+  max-width: 68vw;
+  box-shadow:0 1px 6px #dde3ef2a;
+  font-size: 1.1em;
+}
+.tg-typing-dot {
+  width: .47em; height: .47em;
+  background: #90a6bf;
+  border-radius: 50%;
+  margin: 0 0.17em;
+  opacity: 0.4;
+  animation: tg-typing-dot 1.2s infinite;
+}
+.tg-typing-dot:nth-child(1){ animation-delay:0s;}
+.tg-typing-dot:nth-child(2){ animation-delay:0.21s;}
+.tg-typing-dot:nth-child(3){ animation-delay:0.44s;}
+.input-area {
+  position: fixed;
+  left:0; right:0; bottom:0;
+  margin:0 auto;
+  width:100vw; max-width:900px;
+  display:flex;gap:0.7em;
+  align-items: flex-end;
+  background:#fff;
+  border-top:1px solid #e0e4ef;
+  padding: .7em;
+  z-index: 3;
+  box-shadow: 0 -2px 8px #dde3ef38;
+  padding-bottom:calc(.7em + env(safe-area-inset-bottom,0));
+}
+textarea {
+  flex:1;
+  min-height:38px; max-height:120px;
+  border:none;
+  background:#f5f5fa;
+  border-radius: 1.13em;
+  padding:.7em 1em;
+  font-size:1em;
+  font-family:inherit;
+  resize:none;
+  transition:background 0.18s,box-shadow 0.22s;
+  box-shadow: 0 1px 4px #eaecef2c;
+}
+textarea:focus {
+  outline:none; 
+  background:#fff;
+  box-shadow:0 1px 8px #bbdefb44;
+}
+button[type="submit"] {
+  border:none;
+  background:var(--primary-color);
+  color:#fff;
+  width:43px;height:43px;
+  border-radius:100%;
+  cursor:pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:1.4em;
+  transition: opacity .17s;
+  margin-left:0.2em;
+  box-shadow:0 1px 4px #98cee944;
+}
+button[type="submit"]:active,
+button[type="submit"]:hover {
+  opacity:0.9;
+  background: #15649a;
+}
+/* Кнопка удаления */
+.msg .delete-btn {
+  display: none;
+  position: absolute;
+  top: 7px;
+  right: 10px;
+  background: #fff;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 1px 6px #dde3ef31;
+  font-size: 1.15em;
+  color: #b22020;
+  cursor: pointer;
+  padding: 2px 6px 3px 6px;
+  z-index: 5;
+  opacity: 0.85;
+  transition: opacity .15s;
+}
+.msg .delete-btn:active {
+  opacity: 1;
+  background:#ffefef;
+}
+.msg:hover .delete-btn,
+.msg.show-delete .delete-btn {
+  display: block;
+}
+/* Для мобильных - не мешаем кликам по тексту */
+@media (max-width: 600px) {
+  html, body { font-size:15px;}
+  .main-chat-wrapper, .input-area, .chat-header { max-width:100vw;}
+  .chat-history {padding-left:2vw; padding-right:2vw;}
+  .msg {max-width:98vw;}
+  button[type="submit"] {width:38px;height:38px;font-size:1.12em;}
+  .msg .delete-btn { font-size: 1.2em; right: 5px;}
+}
+@media (max-width:400px){
+  html, body {font-size:13.4px;}
+  .msg {padding: 0.5rem 0.33rem;}
+}
+@keyframes fadeIn {
+  from {opacity:0;transform:translateY(12px);}
+  to   {opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+  <div class="main-chat-wrapper">
+    <div class="chat-header">
+      Шейх GPT
+    </div>
+    <div class="chat-history" id="chat-history"></div>
+    <form class="input-area" id="form">
+      <textarea id="input" rows="1" placeholder="Сообщение..." autocomplete="off"></textarea>
+      <button type="submit">&#128073;&#65039;</button>
+    </form>
+  </div>
+  <script>
+    const ta = document.getElementById('input');
+    const history = document.getElementById('chat-history');
+    const form = document.getElementById('form');
+
+    function addMsg(content, type='user') {
+      const el = document.createElement('div');
+      el.className = 'msg ' + type;
+      el.innerHTML = `
+        <span class="msg-text">${content}</span>
+        <button class="delete-btn" title="Удалить сообщение" tabindex="-1">🗑️</button>
+      `;
+      el.querySelector('.delete-btn').onclick = () => el.remove();
+
+      // Долгое нажатие (или наведение) показывает delete на мобилке:
+      let pressTimer;
+      el.addEventListener('touchstart', e => {
+        pressTimer = setTimeout(() => el.classList.add('show-delete'), 350);
+      });
+      el.addEventListener('touchend', e => {
+        clearTimeout(pressTimer);
+        setTimeout(() => el.classList.remove('show-delete'), 2000);
+      });
+      el.addEventListener('mouseleave', () => {
+        if (el.classList.contains('show-delete')) {
+          setTimeout(() => el.classList.remove('show-delete'), 1700);
+        }
+      });
+
+      history.appendChild(el);
+      history.scrollTop = history.scrollHeight;
+    }
+
+    function showSheikhTyping() {
+      const typing = document.getElementById('tg-typing');
+      if (typing) typing.remove();
+      history.insertAdjacentHTML('beforeend', 
+        `<div id="tg-typing" class="tg-typing bot">
+          <span class="tg-typing-dot"></span>
+          <span class="tg-typing-dot"></span>
+          <span class="tg-typing-dot"></span>
+        </div>`
+      );
+      history.scrollTop = history.scrollHeight;
+    }
+
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const val = ta.value.trim();
+      if (!val) return;
+      addMsg(val.replace(/</g,"&lt;"), 'user');
+      ta.value = ""; ta.style.height = 'auto';
+      history.scrollTop = history.scrollHeight;
+
+      showSheikhTyping();
+      setTimeout(()=>{
+        const typing = document.getElementById('tg-typing');
+        if (typing) typing.remove();
+        addMsg('Ас-саляму алейкум! Это ответ Шейха.', 'bot');
+      }, 1800);
+    });
+  </script>
+</body>
+</html>
