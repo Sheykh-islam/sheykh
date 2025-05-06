@@ -55,6 +55,31 @@ html, body {
   transform: translateY(10px);
   word-break: break-word;
 }
+.delete-btn {
+  display: none;
+  position: absolute;
+  top: 8px; right: 12px;
+  font-size: 1.1em;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  color: #b22020;
+  padding: 2px 7px;
+  opacity: 0.93;
+  cursor: pointer;
+  z-index: 2;
+  transition: background .17s, opacity .17s;
+  box-shadow: 0 2px 10px #879cb82f;
+}
+.delete-btn:active { background:#f7dede; opacity:1; }
+.msg.show-delete .delete-btn {
+  display: block;
+  animation: fadeDel .28s;
+}
+@keyframes fadeDel {
+  from {opacity:0; transform:scale(0.7);}
+  to   {opacity:1; transform:scale(1);}
+}
 
 /* Выпадающая строка ввода фиксируется снизу */
 .input-area {
@@ -395,7 +420,46 @@ function addMessage(content, isBot = false) {
   history.appendChild(msg);
   msg.scrollIntoView({ behavior: 'smooth' });
 }
+function addMsg(content, type='user') {
+  const el = document.createElement('div');
+  el.className = 'msg ' + type;
+  el.innerHTML = `
+    <span>${content}</span>
+    <button class="delete-btn" title="Удалить">🗑️</button>
+  `;
 
+  const btn = el.querySelector('.delete-btn');
+  btn.onclick = e => {
+    el.remove();
+  };
+
+  // Долгое нажатие (палец) — мобилки
+  let tapTimer = null;
+  el.addEventListener('touchstart', e => {
+    tapTimer = setTimeout(() => el.classList.add('show-delete'), 400);
+  });
+  el.addEventListener('touchend', e => {
+    clearTimeout(tapTimer);
+    setTimeout(()=>el.classList.remove('show-delete'), 1800);
+  });
+
+  // Долгое нажатие мышью — десктоп
+  let mouseTimer = null;
+  el.addEventListener('mousedown', e => {
+    // Только левая кнопка мыши
+    if (e.button !== 0) return;
+    mouseTimer = setTimeout(() => el.classList.add('show-delete'), 400);
+  });
+  el.addEventListener('mouseup', e => {
+    clearTimeout(mouseTimer);
+    setTimeout(()=>el.classList.remove('show-delete'), 1800);
+  });
+  el.addEventListener('mouseleave', ()=> clearTimeout(mouseTimer) );
+
+  // Добавить в чат
+  document.getElementById('chat-history').appendChild(el);
+  document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+}
 // Извлекаем чистый ответ
 function extractFinalAnswer(text) {
   const match = text.match(/Ответ\s*:\s*([\s\S]*)$/i);
