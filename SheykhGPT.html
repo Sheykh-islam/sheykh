@@ -312,61 +312,6 @@ let messages = [{
 давать ссылки на хадисы: ссылка должна выглядеть так - https://amrayn-com.translate.goog/ , после этого мы добавляем откуда взяли хадис : bukhari ; abudawood ; muslim ; malik ; nasai (Имам ахмад) ; tirmidhi ; ibnmajah ; riyadussaliheen (яхья ан навави) ; qudsi , после этого добавляем номер хадиса через : и затем вставляем это ?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true. Например : https://amrayn-com.translate.goog/bukhari:2030?_x_tr_sl=en&_x_tr_tl=ru&_x_tr_hl=ru&_x_tr_pto=wapp&_x_tr_hist=true - тут мы дали ссылку на сахих бухари 2030 хадис. И по такому принципу сделать ссылки на все хадисы.
 Важно давай ссылки только на те сборники которые я тебе написал , на остальные не давай ссылки и не приводи с них примеры.`
 }];
-
-function saveMessages() {
-  localStorage.setItem('botChatHistory', JSON.stringify(messages));
-}
-
-if (localStorage.getItem('botChatHistory')) {
-  const saved = JSON.parse(localStorage.getItem('botChatHistory'));
-  if (saved && saved.length) messages = saved;
-}
-
-for (const msg of messages) {
-  if (msg.role !== "system") addMessage(msg.content, msg.role === "assistant");
-}
-// Универсальная озвучка через Web Speech API
-function speakNative(text, language) {
-  if (!window.speechSynthesis) {
-    alert("Озвучка недоступна в этом браузере.");
-    return;
-  }
-  const handle = () => {
-    const voices = window.speechSynthesis.getVoices();
-    let voice = voices.find(v => v.lang === language);
-    if (!voice) voice = voices.find(v => v.lang.startsWith(language.split('-')[0]));
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = language;
-    if (voice) utter.voice = voice;
-    window.speechSynthesis.speak(utter);
-  };
-  if (window.speechSynthesis.getVoices().length) {
-    handle();
-  } else {
-    window.speechSynthesis.onvoiceschanged = handle;
-  }
-}
-
-// Очищаем текст для озвучки (убираем ссылки, символы, лишнее)
-function cleanForSpeech(text) {
-  const markers = ["ссылки:", "ссылки :", "источники:", "источники :"];
-  let lower = text.toLowerCase();
-  let cutAt = -1;
-  for (let marker of markers) {
-    let idx = lower.indexOf(marker);
-    if (idx !== -1 && (cutAt === -1 || idx < cutAt)) cutAt = idx;
-  }
-  if (cutAt !== -1) text = text.substring(0, cutAt);
-
-  text = text.replace(/\bстикер[ы]?\b/gi, '');
-  text = text.replace(/[\*#«»]/g, '');
-  text = text.replace(/https?:\/\/\S+|ftp:\/\/\S+/g, '');
-  text = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{1F700}-\u{1F77F}]/gu, '');
-  text = text.replace(/\s+/g, ' ');
-  return text.trim();
-}
-
-// Красивая разметка ответа (жирное, списки, абзацы)
 function formatResponse(text) {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>\$1</strong>')
@@ -374,100 +319,91 @@ function formatResponse(text) {
     .replace(/<li>.*<\/li>/gs, '<ul>$&</ul>')
     .replace(/\n{2,}/g, '</p><p>')
     .replace(/\n/g, '<br>');
-    // ! Не добавляйте сюда обработку ссылок!
 }
-
-// === ВАЖНОЕ: функция подменяет ссылки на <a href="...">ссылка</a> ===
 function replaceLinksWithAnchor(text) {
   return text.replace(
     /https?:\/\/[^\s)<>"']*[^\s.,)<>"']/gi,
     url => `<a href="${url}" target="_blank" rel="noopener">ссылка</a>`
   );
 }
-
-// Добавление сообщения на экран
-function addMessage(content, isBot = false) {
-  const msg = document.createElement('div');
-  msg.className = `msg ${isBot ? 'bot' : 'user'}`;
-  if (isBot) {
-    const withLinks = replaceLinksWithAnchor(content);
-    msg.innerHTML = `
-      <div>${formatResponse(withLinks)}</div>
-      <div class="msg-actions">
-        <button class="copy-btn" title="Копировать">📋</button>
-        <button class="speak-btn" title="Озвучить">🔊</button>
-      </div>
-    `;
-
-    const copyBtn = msg.querySelector('.copy-btn');
-    const speakBtn = msg.querySelector('.speak-btn');
-
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(content)
-        .then(() => copyBtn.classList.add('copied'))
-        .catch(() => copyBtn.classList.add('error'));
-      setTimeout(() => copyBtn.classList.remove('copied', 'error'), 1000);
-    };
-
-    speakBtn.onclick = () => {
-      let rawText = msg.querySelector('div').innerText;
-      let toSpeak = cleanForSpeech(rawText);
-      speakNative(toSpeak, 'ru-RU');
-    };
-  } else {
-    msg.textContent = content;
-  }
-  history.appendChild(msg);
-  msg.scrollIntoView({ behavior: 'smooth' });
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      btn.classList.add('copied');
+      setTimeout(() => btn.classList.remove('copied'), 1000);
+    })
+    .catch(() => {
+      btn.classList.add('error');
+      setTimeout(() => btn.classList.remove('error'), 1000);
+    });
 }
-function addMsg(content, type='user') {
-  const el = document.createElement('div');
-  el.className = 'msg ' + type;
-  el.innerHTML = `
-    <span>${content}</span>
-    <button class="delete-btn" title="Удалить">🗑️</button>
-  `;
-
-  const btn = el.querySelector('.delete-btn');
-  btn.onclick = e => {
-    el.remove();
-  };
-
-  // Долгое нажатие (палец) — мобилки
-  let tapTimer = null;
-  el.addEventListener('touchstart', e => {
-    tapTimer = setTimeout(() => el.classList.add('show-delete'), 400);
-  });
-  el.addEventListener('touchend', e => {
-    clearTimeout(tapTimer);
-    setTimeout(()=>el.classList.remove('show-delete'), 1800);
-  });
-
-  // Долгое нажатие мышью — десктоп
-  let mouseTimer = null;
-  el.addEventListener('mousedown', e => {
-    // Только левая кнопка мыши
-    if (e.button !== 0) return;
-    mouseTimer = setTimeout(() => el.classList.add('show-delete'), 400);
-  });
-  el.addEventListener('mouseup', e => {
-    clearTimeout(mouseTimer);
-    setTimeout(()=>el.classList.remove('show-delete'), 1800);
-  });
-  el.addEventListener('mouseleave', ()=> clearTimeout(mouseTimer) );
-
-  // Добавить в чат
-  document.getElementById('chat-history').appendChild(el);
-  document.getElementById('chat-history').scrollTop = document.getElementById('chat-history').scrollHeight;
+function speakNative(text, language='ru-RU') {
+  if (!window.speechSynthesis) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = language;
+  window.speechSynthesis.speak(utter);
 }
-// Извлекаем чистый ответ
 function extractFinalAnswer(text) {
   const match = text.match(/Ответ\s*:\s*([\s\S]*)$/i);
   if (match) return match[1].trim();
   return text.trim();
 }
 
-// Отправка запроса и получение ответа от бота
+function addMsg(content, type = 'user') {
+  const el = document.createElement('div');
+  el.className = 'msg ' + type;
+
+  if (type === 'bot') {
+    const withLinks = replaceLinksWithAnchor(content);
+    el.innerHTML = `
+      <div>${formatResponse(withLinks)}</div>
+      <div class="msg-actions">
+        <button class="copy-btn" title="Копировать">📋</button>
+        <button class="speak-btn" title="Озвучить">🔊</button>
+      </div>
+      <button class="delete-btn" title="Удалить">🗑️</button>
+    `;
+    el.querySelector('.copy-btn').onclick = () =>
+      copyToClipboard(el.querySelector('div').innerText, el.querySelector('.copy-btn'));
+    el.querySelector('.speak-btn').onclick = () =>
+      speakNative(el.querySelector('div').innerText, 'ru-RU');
+  } else {
+    el.innerHTML = `
+      <span>${content}</span>
+      <button class="delete-btn" title="Удалить">🗑️</button>
+    `;
+  }
+
+  el.querySelector('.delete-btn').onclick = () => el.remove();
+
+  let tapTimer, mouseTimer;
+  el.addEventListener('touchstart', () => {
+    tapTimer = setTimeout(() => el.classList.add('show-delete'), 400);
+  });
+  el.addEventListener('touchend', () => {
+    clearTimeout(tapTimer);
+    setTimeout(() => el.classList.remove('show-delete'), 1800);
+  });
+  el.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    mouseTimer = setTimeout(() => el.classList.add('show-delete'), 400);
+  });
+  el.addEventListener('mouseup', () => {
+    clearTimeout(mouseTimer);
+    setTimeout(() => el.classList.remove('show-delete'), 1800);
+  });
+  el.addEventListener('mouseleave', () => clearTimeout(mouseTimer));
+
+  document.getElementById('history').appendChild(el);
+  el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- Прогрузка истории ---
+for (const msg of messages) {
+  if (msg.role !== "system") addMsg(msg.content, msg.role === "assistant" ? "bot" : "user");
+}
+
+// --- Отправка к LLM ---
 async function sendToAI(prompt) {
   try {
     const response = await fetch('https://llm.chutes.ai/v1/chat/completions', {
@@ -505,16 +441,16 @@ async function sendToAI(prompt) {
   }
 }
 
-// Обработка отправки формы
+// --- Обработка отправки формы ---
 form.onsubmit = async (e) => {
   e.preventDefault();
   const question = input.value.trim();
   if(!question) return;
   input.value = '';
   input.style.height = '48px';
-  addMessage(question);
+  addMsg(question, 'user');
   messages.push({role: "user", content: question});
-  saveMessages(); // ← ДОБАВИТЬ здесь
+  saveMessages();
 
   const loader = document.createElement('div');
   loader.className = 'msg bot thinking';
@@ -529,12 +465,12 @@ form.onsubmit = async (e) => {
   try {
     const response = await sendToAI(question);
     loader.remove();
-    addMessage(extractFinalAnswer(response), true);
+    addMsg(extractFinalAnswer(response), 'bot');
     messages.push({role: "assistant", content: response});
-    saveMessages(); // ← ДОБАВИТЬ здесь
+    saveMessages();
   } catch(error) {
     loader.remove();
-    addMessage(`Ошибка: ${error.message}`, true);
+    addMsg(`Ошибка: ${error.message}`, 'bot');
   }
 };
 
