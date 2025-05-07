@@ -160,6 +160,76 @@ html, body {
 :-ms-input-placeholder { color: #a5adc3;}
 ::placeholder { color: #a5adc3;}
 ::-webkit-scrollbar {width:0;}
+.chat-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1966b3;
+  border-radius: 0 0 22px 22px;
+  min-height: 52px;
+  padding: 0.5rem 1rem 0.6rem 1.15rem;
+  margin-bottom: 8px;
+  color: #fff;
+  position: relative;
+  z-index: 80;
+}
+.chat-title {
+  font-size: 1.22em; font-weight:900; letter-spacing:0.04em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.settings-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 2px 2px 2px 16px;
+  color: #1966b3;
+  display: flex;align-items:center;justify-content:center;
+}
+.settings-btn svg {display:block;}
+/* --- модальное окошко --- */
+.settings-modal {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  z-index:90099; background:rgba(30,30,30,0.28);
+  display:flex; align-items:center; justify-content:center;
+}
+.settings-content {
+  background:#fff; color:#222;min-width:220px;
+  padding:22px 22px 16px 22px; border-radius:18px;
+  box-shadow:0 12px 28px #2221a116;
+  text-align:center;
+  position:relative;
+}
+.font-size-btn {
+  background:#e6effa;
+  color:#1966b3;
+  font-size:1.4em;
+  border:none;
+  border-radius:8px;
+  padding:4px 16px;
+  cursor:pointer;
+  font-weight: bold;
+  transition:.18s;
+}
+.font-size-btn:active { background: #b2d3f6; }
+.close-settings {
+  margin-top:14px;
+  background:#e8e8e8;
+  border:none;
+  font-size:.95em;
+  border-radius:8px;
+  color:#125080;
+  font-weight: 600;
+  padding:5px 19px;
+  cursor:pointer;
+  transition:.14s;
+}
+.close-settings:active { background:#e2ecf3; }
+@media (max-width:600px) {
+  .chat-header-bar {font-size:1em; min-height:44px; padding:.39em .5em .43em 0.8em;}
+  .chat-title{font-size:1.06em;}
+  .settings-content{min-width:176px;}
+  .font-size-btn{font-size:1.1em;}
+}
 
 /* --- mobile adjustments --- */
 @media (max-width:600px){
@@ -181,29 +251,44 @@ html, body {
   </style>
  </head>
  <body>
- <div style="background: #166c43; border-radius: 0 0 22px 22px; padding: 0;margin-bottom:14px;">
-   <div style="display: flex; align-items: center; max-width:610px;margin:0 auto;">
-     <span style="color:#fff;font-size:1.34em;font-weight:900;letter-spacing:0.04em;margin-left:18px;margin-top:2px;">
-     </span>
-   </div>
-   <nav style="text-align:center;margin-top:0px; padding:10px 0 7px 0;">
-     <a href="namaz.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Время намаза</a>
-     <a href="quran.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Суры Корана</a>
-     <a href="mush%D0%B0f.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">Мусхаф онлайн</a>
-     <a href="99imen.html" style="color:#fff;font-weight:bold;padding:0 12px;text-decoration:none;">99 имен Аллаха</a>
-   </nav>
- </div>
-   <div class="main-chat-wrapper">
-     <div class="chat-history" id="history">
-<div class="msg bot">
-      <div>Ассаляму алейкум уа рахматуллахи уа баракатух! Уважаемые братья и сёстры задайте мне ваш вопрос, я отвечу на основе Корана и Сунны.</div>
- </div>
-     </div>
-     <form class="input-area" id="form">
-       <textarea id="input" placeholder="Напишите ваш вопрос..."></textarea>
-       <button type="submit">➤</button>
-     </form>
-   </div>
+  <div class="chat-header-bar">
+    <span class="chat-title">Чат с Шейхом</span>
+    <button class="settings-btn" id="settings-button" aria-label="Настройки" title="Настройки">
+      <svg width="27" height="27" fill="none" viewBox="0 0 27 27" aria-hidden="true">
+        <circle cx="13.5" cy="13.5" r="10" stroke="#fff" stroke-width="1.6" fill="#1966b3"/>
+        <g stroke="#fff" stroke-width="1.6">
+          <circle cx="13.5" cy="13.5" r="4.2"/>
+          <line x1="13.5" y1="4" x2="13.5" y2="8"/>
+          <line x1="13.5" y1="19" x2="13.5" y2="23"/>
+          <line x1="4" y1="13.5" x2="8" y2="13.5"/>
+          <line x1="19" y1="13.5" x2="23" y2="13.5"/>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div class="settings-modal" id="font-settings" style="display:none;">
+    <div class="settings-content">
+      <div style="font-weight:bold; margin-bottom:10px">Размер текста</div>
+      <div style="display:flex; gap:18px; justify-content:space-between;align-items:center">
+        <button type="button" class="font-size-btn" id="decFont">A-</button>
+        <span id="curFontSize" style="min-width:48px;display:inline-block;text-align:center;"></span>
+        <button type="button" class="font-size-btn" id="incFont">A+</button>
+      </div>
+      <button type="button" class="close-settings" id="close-settings">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="main-chat-wrapper">
+    <div class="chat-history" id="history">
+      <div class="msg bot">
+        <div>Ассаляму алейкум уа рахматуллахи уа баракатух! Уважаемые братья и сёстры задайте мне ваш вопрос, я отвечу на основе Корана и Сунны.</div>
+      </div>
+    </div>
+    <form class="input-area" id="form">
+      <textarea id="input" placeholder="Напишите ваш вопрос..."></textarea>
+      <button type="submit">➤</button>
+    </form>
+  </div>
  <script>
  const API_KEY = "cpk_cff03a53f1284a2286e3245fce187779.0efe60ce83d25ec7aaf37765034d352a.8zjqxcbm1QtyO9kDld0q6t2rk3nnKCly";
  const MODEL = "deepseek-ai/DeepSeek-R1";
@@ -482,6 +567,39 @@ body: JSON.stringify({
     return `Извините, произошла ошибка: ${error.message}`;
   }
 }
+</script>
+<script>
+(function() {
+  const html = document.documentElement;
+  const getFontSize = () => Number(localStorage.getItem('fontSize')||17.5);
+  const setFontSize = s => {
+    html.style.fontSize = s + "px";
+    document.getElementById('curFontSize').innerText = Math.round(s) + ' px';
+    localStorage.setItem('fontSize', s);
+  };
+  // отклон по умолчанию
+  document.addEventListener('DOMContentLoaded',()=>{
+    setFontSize(getFontSize());
+    // открыть настройки
+    document.getElementById('settings-button').onclick = ()=> {
+      document.getElementById('font-settings').style.display='flex';
+    };
+    // закрыть настройки
+    document.getElementById('close-settings').onclick = ()=>{
+      document.getElementById('font-settings').style.display='none';
+    };
+    // кнопки изменения размера
+    document.getElementById('decFont').onclick = ()=>{
+      let size = Math.max(13,getFontSize()-1.5);
+      setFontSize(size);
+    };
+    document.getElementById('incFont').onclick = ()=>{
+      let size = Math.min(27,getFontSize()+1.5);
+      setFontSize(size);
+    };
+    setFontSize(getFontSize()); // повтор, для правильной цифры в диалоге
+  });
+})();
 </script>
  </body>
  </html>
