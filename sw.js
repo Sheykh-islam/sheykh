@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-cards-v2';
+const CACHE_NAME = 'my-cards-v3';
 const urlsToCache = [
   '/',
   '/menu.html',
