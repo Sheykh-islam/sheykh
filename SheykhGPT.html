@@ -12,47 +12,47 @@
   --user-bg: #e5f0fd;
   --actions-bg: #f4f4fa;
 }
-* { box-sizing: border-box; margin:0; padding:0; }
+* { box-sizing: border-box; margin:0; padding:0;}
 html, body {
   min-height: 100vh;
   width: 100vw;
   min-width: 0;
   font-family: 'Poppins', Arial, sans-serif;
+  font-size: 17.5px;
   background: #fff;
   color: #23272f;
-  font-size: 16px;
   overflow-x: hidden;
-  touch-action:manipulation;
+  touch-action: manipulation;
 }
 .main-chat-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
   max-width: 600px;
   margin: 0 auto;
   background: #fff;
   height: 100svh;
-  height: 100dvh;
+  padding-bottom: 73px; /* ровно высота input-area + отступ */
 }
 .chat-header {
-  font-size: 1.08em;
+  font-size: 1.09em;
   padding: 1.1rem 1rem .7rem 1rem;
 }
 .chat-history {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 1.2rem 5px 1rem 5px;
+  padding: 1.2rem 5px 2rem 5px;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.16rem;
+  margin-bottom: 0;
 }
 .msg {
-  max-width: 95vw;
-  padding: 0.95rem 1rem 0.6rem 1rem;
-  border-radius: 1.1rem;
+  max-width: 97vw;
+  padding: 1.05rem 1.02rem 0.7rem 1.02rem;
+  border-radius: 1.18rem;
   position: relative;
   word-break: break-word;
-  font-size:1em;
+  font-size: 1.10em;
   background: #f7f7fa;
   overflow: visible;
   margin-left: 0.1rem;
@@ -71,26 +71,25 @@ html, body {
 .dots span:nth-child(3){ animation-delay:.4s;}
 @keyframes bounce {0%,60%,100%{transform:translateY(0);opacity:0.4;}30%{transform:translateY(-6px);opacity:1;}}
 
+/* --- Action bar --- */
 .msg-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   justify-content: flex-end;
   background: var(--actions-bg);
-  border-radius: 0 0 14px 14px;
-  padding: 6px 4px 2px 4px;
-  margin-top: 8px;
+  border-radius: 0 0 15px 15px;
+  padding: 8px 4px 5px 4px;
+  margin-top: 10px;
   position: relative;
-  left: -10px; right: 0;
+  left: -2px; right: 0; z-index:7;
 }
-
 .copy-btn, .speak-btn, .delete-btn {
   background: #fff;
   border: 1px solid #e0e4ef;
-  padding: 7px 10px;
-  border-radius: 10px;
-  font-size: 17px;
+  padding: 7px 13px;
+  border-radius: 11px;
+  font-size: 1.18em;
   cursor:pointer;
   opacity:.92;
   transition: background 0.15s, box-shadow 0.15s, opacity 0.13s;
@@ -105,65 +104,52 @@ html, body {
 .delete-btn { color: #c02b1c; }
 .delete-btn:active { background: #f7dede; }
 
-@media (max-width:600px){
-  html,body{font-size:15px;}
-  .main-chat-wrapper{max-width:100vw;width:100vw;}
-  .chat-header{padding:.8rem .8rem .5rem .8rem;}
-  .chat-history{padding:1rem 3px;}
-  .msg{padding:.75rem .6rem .43rem .7rem; font-size:.98em; max-width:100vw;}
-  .msg-actions{left:-6px;padding-left:2px;}
-  .input-area{padding:.3rem;}
-  textarea{min-height:37px; font-size:1em;}
-  button[type="submit"]{width:40px;height:40px;font-size:1.06em;}
-}
-@media (max-width:390px){
-  html,body{font-size:13.7px;}
-  .msg{padding:.39rem .4rem .3rem .5rem; font-size:0.94em;}
-}
 .input-area {
-  display:flex;
+  display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
-  padding: 0.64rem 0.17rem 0.7rem 0.26rem;
+  gap: 0.53rem;
+  padding: 0.73rem 0.21rem 0.73rem 0.22rem;
   border-top: 1px solid #e0e4ef;
   background: #f8fafd;
   position: fixed;
-  bottom:0; left:0; right:0;
+  bottom: 0; left: 0; right: 0;
   width: 100vw;
-  z-index:99;
-  box-shadow: 0 -1px 23px #e0e7fa23;
+  z-index: 999;
+  box-shadow: 0 -1px 23px #e0e7fa35;
 }
 .input-area textarea {
-  flex:1 1 0%;
-  border:1px solid transparent;
-  border-radius: 1.2rem;
-  padding:.8rem 1rem;
+  flex: 1 1 0%;
+  border: 1px solid transparent;
+  border-radius: 1.33rem;
+  padding: .9rem 1.11rem;
   font: inherit;
+  font-size: 1.09em;
   background: #f7f9ff;
-  resize:none;
-  min-height:41px;
-  max-height:120px;
-  transition:.2s;
-  outline:none;
+  resize: none;
+  min-height: 43px;
+  max-height: 120px;
+  transition: .2s;
+  outline: none;
   box-sizing: border-box;
-  width:1%;
+  width: 1%;
 }
 .input-area textarea:focus{
-  border-color:var(--primary-color);
-  background:#fff;
+  border-color: var(--primary-color);
+  background: #fff;
 }
 .input-area button[type="submit"] {
   border:none;
   background:var(--primary-color);
   color:#fff;
-  width:43px;
-  height:43px;
+  width:49px;
+  height:49px;
   border-radius:50%;
   padding:0;
   cursor:pointer;
-  font-size:1.07em;
+  font-size:1.21em;
   box-shadow:0 3px 7px #2a4c8128;
   flex-shrink:0;
+  margin-left: 1px;
 }
 .input-area button[type="submit"]:hover{
   opacity:.9;
@@ -173,8 +159,25 @@ html, body {
 ::-moz-placeholder { color: #a5adc3;}
 :-ms-input-placeholder { color: #a5adc3;}
 ::placeholder { color: #a5adc3;}
-@keyframes fadeIn {to{opacity:1;transform:none;}}
 ::-webkit-scrollbar {width:0;}
+
+/* --- mobile adjustments --- */
+@media (max-width:600px){
+  html,body{font-size:17px;}
+  .main-chat-wrapper{max-width:100vw;width:100vw; padding-bottom: 75px;}
+  .chat-header{padding:.85rem .74rem .5rem .65rem;}
+  .chat-history{padding:1rem 3px;}
+  .msg{padding:.83rem .54rem .53rem .69rem; font-size:1.13em; max-width:99vw;}
+  .msg-actions{left:-3px; padding-left:2px;}
+  .input-area{padding:.34rem;}
+  textarea{min-height:39px;}
+  button[type="submit"]{width:43px;height:43px;font-size:1.26em;}
+}
+@media (max-width:400px){
+  html,body{font-size:15.2px;}
+  .msg{padding:.38rem .22rem .3rem .37rem; font-size:1.06em;}
+}
+@keyframes fadeIn {to{opacity:1;transform:none;}}
   </style>
  </head>
  <body>
