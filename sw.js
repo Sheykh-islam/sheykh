@@ -1,7 +1,6 @@
 const CACHE_NAME = 'my-cards-v2';
 const urlsToCache = [
   '/',
-  '/index.html',
   '/menu.html',
   '/nam.html',
   '/99menu.html', // Ваши основные HTML-файлы
