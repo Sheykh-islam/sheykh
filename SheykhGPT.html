@@ -264,6 +264,7 @@
      <div class="chat-history" id="history">
  <div class="msg bot">
    <div>Ассаляму алейкум уа рахматуллахи уа баракатух! Уважаемые братья и сёстры задайте мне ваш вопрос, я отвечу на основе Корана и Сунны.</div>
+<button class="delete-btn" title="Удалить сообщение">🗑️</button>
    <div class="msg-actions">
      <button class="copy-btn" title="Копировать">📋</button>
      <button class="speak-btn" title="Озвучить">🔊</button>
@@ -543,5 +544,24 @@
    input.style.height = input.scrollHeight + 'px';
  });
  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Появиться только при наведении уже реализовано через CSS
+
+  // Слушаем клики на все "корзинки"
+  document.getElementById('history').addEventListener('click', function(e) {
+    if (e.target.classList.contains('delete-btn')) {
+      const msgDiv = e.target.closest('.msg');
+      if (!msgDiv) return;
+      if (confirm('Вы уверены, что хотите удалить это сообщение?')) {
+        msgDiv.remove();
+      }
+    }
+  });
+
+  // Удобно: чтобы иконка появлялась всегда вместе с сообщением, если новые сообщения добавляются динамически
+  // При добавлении новых msg, просто добавляйте в конец button.delete-btn, так же как выше!
+});
+</script>
  </body>
  </html>
