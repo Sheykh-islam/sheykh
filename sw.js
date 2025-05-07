@@ -1,4 +1,4 @@
-const CACHE_NAME = 'my-cards-v1';
+const CACHE_NAME = 'my-cards-v2';
 const urlsToCache = [
   '/',
   '/index.html',
