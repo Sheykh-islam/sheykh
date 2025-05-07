@@ -14,13 +14,13 @@
   min-height: 1vh;
 }
 .container {
-  max-width: 540px;
-  width: 96vw;
-  margin: 12px auto 0 auto;
+  max-width: 400px;
+  width: 98vw;
+  margin: 14px auto 0 auto;
   background: #ececec;
   border-radius: 14px;
   box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-  padding: 14px 8px 10px 8px;
+  padding: 10px 10px 10px 10px;
   text-align: center;
 }
 .hint {
@@ -49,20 +49,18 @@ h2 {
 .card {
   background: #fff;
   border-radius: 18px;
-  padding: 8vw 5vw 7vw 5vw;
-  min-height: 19vw;
+  padding: 26px 14px 22px 14px;  /* <-- px, не vw, и не проценты! */
+  font-size: 1.25rem;
+  min-height: 90px;
   margin-bottom: 23px;
-  font-size: 1.28rem;
-  cursor: pointer;
-  transition: transform .3s;
   box-shadow: 0 6px 20px rgba(33, 134, 66, 0.11);
   position: relative;
   perspective: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 0;
-  width: 100%;
+  width: 100%; /* растягивается только по контейнеру! */
+  box-sizing: border-box;
 }
 .card-inner {
   position: relative;
