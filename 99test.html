@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Тест по именам Аллаха</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #ececec;
+      margin: 0;
+      padding: 0;
+      font-family: 'Amiri', serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-image: url('https://cdn.pixabay.com/photo/2016/09/05/23/28/arabesque-1645476_1280.png');
+      background-size: 23vw;
+      background-repeat: repeat;
+      background-blend-mode: multiply;
+      box-sizing: border-box;
+    }
+    .container {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #a5d6a7a9;
+      padding: 2.5rem 3rem 2rem 3rem;
+      text-align: center;
+      min-width: 320px;
+      max-width: 410px;
+      margin: 2rem auto;
+      border: 2px solid #388e3c55;
+      position: relative;
+      z-index: 1;
+    }
+    .ayah {
+      font-size: 2.2rem;
+      letter-spacing: .2em;
+      color: #218c32;
+      margin: 1.1rem 0 0.8rem 0;
+      font-family: 'Amiri', serif;
+      font-weight: bold;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      margin-bottom: 0.95rem;
+      color: #2e6749;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 1.08rem;
+      max-width: 350px;
+      margin: 0 auto;
+      padding-bottom: 7px;
+    }
+    .answer-btn {
+      border: none;
+      border-radius: 9px;
+      padding: 0.76rem;
+      font-size: 1.08rem;
+      background: #f1ffe5;
+      color: #156525;
+      box-shadow: 0 2px 9px #81c78457;
+      cursor: pointer;
+      transition: background 0.22s, color 0.18s;
+      font-family: inherit;
+    }
+    .answer-btn:hover {
+      background: #c8e6c9;
+      color: #145017;
+    }
+    .answer-btn.correct {
+      background: #43a047;
+      color: #fff;
+      font-weight: bold;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,43,11,0.80);
+      z-index: 10;
+      color: #fff;
+      font-family: 'Amiri', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      gap: 18px;
+      letter-spacing: 0.04em;
+    }
+    .overlay button {
+      padding: 0.77em 2.3em;
+      font-size: 1.09rem;
+      border: none;
+      border-radius: 7px;
+      background: #81c784;
+      color: #154819;
+      font-weight: bold;
+      margin-top: 17px;
+      cursor: pointer;
+      box-shadow: 0 1px 8px #3e824741;
+      font-family: inherit;
+      transition: background 0.18s;
+    }
+    .overlay button:hover { background: #30946a; color: #fff;}
+    .bismillah {
+      font-family: 'Amiri', serif;
+      font-size: 1.08rem;
+      color: #469c32;
+      margin-bottom: 1.7rem;
+      margin-top: 0.8rem;
+    }
+    @media (max-width: 550px) {
+      .container { padding: 1.1rem 0.5rem 1.2rem 0.5rem; }
+      .ayah { font-size: 1.36rem;}
+      .answers { gap: 0.65rem;}
+      .overlay { font-size: 1.24rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="main-container">
+    <div class='bismillah'>بسم الله الرحمن الرحيم</div>
+    <div class="question-text" id="question-text">Как переводится имя Аллаха:</div>
+    <div class="ayah" id="ayah"></div>
+    <div class="answers" id="answers"></div>
+  </div>
+  <div class="overlay" id="overlay" style="display: none;">
+    <div>Дорогой брат / сестра,<br>вы ответили неправильно.<br>Попробуйте еще раз.</div>
+    <button onclick="retry()">Попробовать снова</button>
+  </div>
+  <script>
+    const names = [
+{ name: "Аллах", value: "Allah", translation: "Тот, Кто является Единственным истинным Богом, Творцом и Владыкой всего сущего, К Которому обращаются в молитвах и поклонении." },
+{ name: "Аль-‘Алим", value: "Al-‘Alim", translation: "Тот, кто знает всё. Всезнающий." },
+{ name: "Ар-Рахман", value: "Ar-Rahman", translation: "Тот, кто проявляет милость ко всем творениям." },
+{ name: "Ар-Рахим", value: "Ar-Rahim", translation: "Тот, кто проявляет особую милость к верующим." },
+{ name: "Аль-Малик", value: "Al-Malik", translation: "Тот, кто владеет всем сущим." },
+{ name: "Аль-Куддус", value: "Al-Quddus", translation: "Тот, кто абсолютно чист." },
+{ name: "Ас-Салям", value: "As-Salam", translation: "Тот, кто дарует мир и покой." },
+{ name: "Аль-Му'мин", value: "Al-Mu'min", translation: "Тот, кто дарует веру и безопасность." },
+{ name: "Аль-Мухаймин", value: "Al-Muhaymin", translation: "Тот, кто наблюдает за всем." },
+{ name: "Аль-Азиз", value: "Al-Aziz", translation: "Тот, кто обладает абсолютной силой." },
+{ name: "Аль-Джаббар", value: "Al-Jabbar", translation: "Тот, кто принуждает и исправляет." },
+{ name: "Аль-Мутакаббир", value: "Al-Mutakabbir", translation: "Тот, кто обладает величайшим величием." },
+{ name: "Аль-Халик", value: "Al-Khaliq", translation: "Тот, кто создаёт." },
+{ name: "Аль-Бари", value: "Al-Bari'", translation: "Тот, кто творит из ничего." },
+{ name: "Аль-Мусаввир", value: "Al-Musawwir", translation: "Тот, кто придаёт форму." },
+{ name: "Аль-Гаффар", value: "Al-Ghaffar", translation: "Тот, кто прощает снова и снова." },
+{ name: "Аль-Каххар", value: "Al-Qahhar", translation: "Тот, кто подчиняет всё Своей власти." },
+{ name: "Аль-Ваххаб", value: "Al-Wahhab", translation: "Тот, кто щедро дарует блага." },
+{ name: "Ар-Раззак", value: "Ar-Razzaq", translation: "Тот, кто обеспечивает средства к существованию." },
+{ name: "Аль-Фаттах", value: "Al-Fattah", translation: "Тот, кто открывает двери благ." },
+{ name: "Аль-Кабид", value: "Al-Qabid", translation: "Тот, кто сужает блага или жизнь." },
+{ name: "Аль-Басит", value: "Al-Basit", translation: "Тот, кто расширяет блага." },
+{ name: "Аль-Хафид", value: "Al-Khafid", translation: "Тот, кто унижает недостойных." },
+{ name: "Ар-Рафи'", value: "Ar-Rafi'", translation: "Тот, кто возвышает праведных." },
+{ name: "Аль-Му'из", value: "Al-Mu'iz", translation: "Тот, кто дарует честь и славу." },
+{ name: "Аль-Музил", value: "Al-Mudhill", translation: "Тот, кто унижает несправедливых." },
+{ name: "Ас-Сами'", value: "As-Sami'", translation: "Тот, кто слышит всё." },
+{ name: "Аль-Басир", value: "Al-Basir", translation: "Тот, кто видит всё." },
+{ name: "Аль-Хакам", value: "Al-Hakam", translation: "Тот, кто справедливо судит." },
+{ name: "Аль-Адль", value: "Al-'Adl", translation: "Тот, кто является воплощением справедливости." },
+{ name: "Аль-Латиф", value: "Al-Latif", translation: "Тот, кто проявляет доброту и мягкость." },
+{ name: "Аль-Хабир", value: "Al-Khabir", translation: "Тот, кто знает всё до мельчайших деталей." },
+{ name: "Аль-Халим", value: "Al-Halim", translation: "Тот, кто терпелив и не спешит наказывать." },
+{ name: "Аль-Азим", value: "Al-Azim", translation: "Тот, кто обладает величием." },
+{ name: "Аль-Гафур", value: "Al-Ghafur", translation: "Тот, кто многократно прощает." },
+{ name: "Аш-Шакур", value: "Ash-Shakur", translation: "Тот, кто вознаграждает даже за малые поступки." },
+{ name: "Аль-Алий", value: "Al-Aliyy", translation: "Тот, кто вознесён." },
+{ name: "Аль-Кабир", value: "Al-Kabir", translation: "Тот, кто велик." },
+{ name: "Аль-Хафиз", value: "Al-Hafiz", translation: "Тот, кто охраняет всё." },
+{ name: "Аль-Мукит", value: "Al-Muqit", translation: "Тот, кто поддерживает жизнь." },
+{ name: "Аль-Хасиб", value: "Al-Hasib", translation: "Тот, кто ведёт учёт всех поступков." },
+{ name: "Аль-Джалиль", value: "Al-Jalil", translation: "Тот, кто обладает славой и величием." },
+{ name: "Аль-Карим", value: "Al-Karim", translation: "Тот, кто щедр." },
+{ name: "Ар-Ракиб", value: "Ar-Raqib", translation: "Тот, кто следит за всем." },
+{ name: "Аль-Муджиб", value: "Al-Mujib", translation: "Тот, кто отвечает на молитвы." },
+{ name: "Аль-Васи'", value: "Al-Wasi'", translation: "Тот, кто охватывает всё своей могучестью." },
+{ name: "Аль-Хаким", value: "Al-Hakim", translation: "Тот, кто мудр во всём." },
+{ name: "Аль-Вадуд", value: "Al-Wadud", translation: "Тот, кто любит и дарует милость." },
+{ name: "Аль-Маджид", value: "Al-Majid", translation: "Тот, кто обладает славой." },
+{ name: "Аль-Ба'ис", value: "Al-Ba'is", translation: "Тот, кто воскрешает мёртвых." },
+{ name: "Аш-Шахид", value: "Ash-Shahid", translation: "Тот, кто является свидетелем всего." },
+{ name: "Аль-Хакк", value: "Al-Haqq", translation: "Тот, кто является истиной." },
+{ name: "Аль-Вакил", value: "Al-Wakil", translation: "Тот, кому можно полностью доверять." },
+{ name: "Аль-Кавий", value: "Al-Qawiy", translation: "Тот, кто обладает могуществом." },
+{ name: "Аль-Матин", value: "Al-Matin", translation: "Тот, кто крепок и непоколебим." },
+{ name: "Аль-Валий", value: "Al-Waliyy", translation: "Тот, кто является Покровителем." },
+{ name: "Аль-Хамид", value: "Al-Hamid", translation: "Тот, кто достоин всех похвал." },
+{ name: "Аль-Мухси", value: "Al-Muhsi", translation: "Тот, кто ведёт учёт всего." },
+{ name: "Аль-Мубди'", value: "Al-Mubdi'", translation: "Тот, кто создаёт впервые." },
+{ name: "Аль-Му'ид", value: "Al-Mu'id", translation: "Тот, кто возвращает к жизни." },
+{ name: "Аль-Мухий", value: "Al-Muhyi", translation: "Тот, кто дарует жизнь." },
+{ name: "Аль-Мумит", value: "Al-Mumit", translation: "Тот, кто забирает жизнь." },
+{ name: "Аль-Хайй", value: "Al-Hayy", translation: "Тот, кто жив." },
+{ name: "Аль-Кайюм", value: "Al-Qayyum", translation: "Тот, кто вечен и неизменен." },
+{ name: "Аль-Ваджид", value: "Al-Wajid", translation: "Тот, кто имеет всё необходимое." },
+{ name: "Аль-Маджид", value: "Al-Majid", translation: "Тот, кто обладает величием." },
+{ name: "Аль-Вахид", value: "Al-Wahid", translation: "Тот, кто Един." },
+{ name: "Ас-Самад", value: "As-Samad", translation: "Тот, к кому все обращаются в нужде." },
+{ name: "Аль-Кадир", value: "Al-Qadir", translation: "Тот, кто обладает абсолютной властью." },
+{ name: "Аль-Муктадир", value: "Al-Muqtadir", translation: "Тот, кто всемогущ." },
+{ name: "Аль-Мукаддим", value: "Al-Muqaddim", translation: "Тот, кто продвигает вперёд." },
+{ name: "Аль-Му'аххир", value: "Al-Mu'akhkhir", translation: "Тот, кто откладывает или задерживает." },
+{ name: "Аль-Авваль", value: "Al-Awwal", translation: "Тот, кто является первым без начала." },
+{ name: "Аль-Ахир", value: "Al-Akhir", translation: "Тот, кто является последним без конца." },
+{ name: "Аз-Захир", value: "Az-Zahir", translation: "Тот, кто явен." },
+{ name: "Аль-Батин", value: "Al-Batin", translation: "Тот, кто скрыт." },
+{ name: "Аль-Вали", value: "Al-Wali", translation: "Тот, кто является Повелителем." },
+{ name: "Аль-Мута'али", value: "Al-Muta'ali", translation: "Тот, кто возвышен выше всего." },
+{ name: "Аль-Барр", value: "Al-Barr", translation: "Тот, кто проявляет доброту к Своим рабам." },
+{ name: "Ат-Тавваб", value: "At-Tawwab", translation: "Тот, кто принимает покаяние." },
+{ name: "Аль-Мунтаким", value: "Al-Muntaqim", translation: "Тот, кто наказывает виновных." },
+{ name: "Аль-Афувв", value: "Al-Afuww", translation: "Тот, кто стирает грехи." },
+{ name: "Ар-Ра'уф", value: "Ar-Ra'uf", translation: "Тот, кто проявляет сострадание." },
+{ name: "Малик аль-Мульк", value: "Malik al-Mulk", translation: "Тот, кто владеет всем царством." },
+{ name: "Зу-ль-Джалаль ва-ль-Икрам", value: "Dhul-Jalali wal-Ikram", translation: "Тот, кто обладает величием и славой." },
+{ name: "Аль-Муксит", value: "Al-Muqsit", translation: "Тот, кто проявляет справедливость." },
+{ name: "Аль-Джами'", value: "Al-Jami'", translation: "Тот, кто собирает всё вместе." },
+{ name: "Аль-Ганий", value: "Al-Ghaniyy", translation: "Тот, кто не нуждается ни в чём." },
+{ name: "Аль-Мугний", value: "Al-Mughni", translation: "Тот, кто делает богатым." },
+{ name: "Аль-Мани'", value: "Al-Mani'", translation: "Тот, кто препятствует и защищает." },
+{ name: "Ад-Дарр", value: "Ad-Darr", translation: "Тот, кто причиняет вред." },
+{ name: "Ан-Нафи'", value: "An-Nafi'", translation: "Тот, кто приносит пользу." },
+{ name: "Ан-Нур", value: "An-Nur", translation: "Тот, кто является светом." },
+{ name: "Аль-Хади", value: "Al-Hadi", translation: "Тот, кто ведёт по истинному пути." },
+{ name: "Аль-Бади'", value: "Al-Badi'", translation: "Тот, кто творит без образца." },
+{ name: "Аль-Баки", value: "Al-Baqi", translation: "Тот, кто вечен." },
+{ name: "Аль-Варис", value: "Al-Warith", translation: "Тот, кто является Наследником всего." },
+{ name: "Ар-Рашид", value: "Ar-Rashid", translation: "Тот, кто ведёт правильным путём." },
+{ name: "Ас-Сабур", value: "As-Sabur", translation: "Тот, кто терпелив." },
+    ];
+
+    let currentQuestionIndex = null;
+    let correctIndex = null;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function generateQuestion() {
+      // Сбросить
+      document.getElementById('overlay').style.display = 'none';
+
+      // Выбираем случайное имя
+      currentQuestionIndex = Math.floor(Math.random() * names.length);
+      const current = names[currentQuestionIndex];
+
+      document.getElementById('ayah').innerText = current.name + " (" + current.value + ")";
+      document.getElementById('question-text').innerText = "Как переводится имя Аллаха:";
+
+      // Собираем варианты ответов (верный + 3 других случайных)
+      let options = [current.translation];
+      let otherTranslations = names
+        .filter((item, idx) => idx !== currentQuestionIndex)
+        .map(item => item.translation);
+
+      shuffle(otherTranslations);
+      options = options.concat(otherTranslations.slice(0,3));
+      shuffle(options);
+
+      // Определить индекс правильного
+      correctIndex = options.indexOf(current.translation);
+
+      // Сгенерировать кнопки
+      const answersDiv = document.getElementById('answers');
+      answersDiv.innerHTML = '';
+      options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.innerText = opt;
+        btn.onclick = () => handleAnswer(idx);
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(idx) {
+      const answerBtns = document.querySelectorAll('.answer-btn');
+      if (idx === correctIndex) {
+        answerBtns[idx].classList.add('correct');
+        // Через 1 секунду — следующий вопрос:
+        setTimeout(generateQuestion, 1100);
+      } else {
+        document.getElementById('overlay').style.display = 'flex';
+      }
+    }
+
+    function retry() {
+      generateQuestion();
+    }
+
+    // Инициализация
+    generateQuestion();
+  </script>
+</body>
+</html>
