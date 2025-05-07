@@ -244,6 +244,16 @@
    }
  }
  @keyframes fadeIn { to { opacity: 1; transform: none; } }
+.msg:hover .delete-btn {
+  display: block;
+  animation: fadeDel .28s;
+}
+@media (hover: none) and (pointer: coarse) {
+  .msg .delete-btn {
+    display: block;
+    animation: fadeDel .28s;
+  }
+}
  </style>
  </head>
  <body>
